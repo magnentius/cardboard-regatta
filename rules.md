@@ -6,7 +6,7 @@
   - [Points of Sail & Hex Geometry](#points-of-sail--hex-geometry)
 - [Setup & Course Layout](#setup--course-layout)
   - [Race Setup](#race-setup)
-  - [Starting Line Layout](#starting-line-layout-flat-topped-hexes)
+  - [Starting Line Layout](#starting-line-layout-flat-topped-hexes--vertical-columns)
   - [Sailing Instructions](#sailing-instructions-sailing-the-course)
   - [Example Courses](#example-courses)
   - [Fast-Play Rules](#fast-play-rules-1520-min-sprint)
@@ -36,9 +36,10 @@
 - **Hex grid**
 - **Boat tokens** for each player (5 tokens per boat, close-hauled [port](#term-port)/[starboard](#term-starboard) on opposite sides)
 - **Action deck** for each player
-- **Wind deck**
+- **Wind Deck** (10 cards for global wind shifts)
+- **Global Wind Direction Marker** (placed at the top of the board)
 - **Speed Trackers** (Player mats with speed sliders or d6 dice to track speed 0–4)
-- **d6 die** (for pre-start turn counter)
+- **Two d6 dice** (for pre-start turn counter and global wind rolls)
 - **Red Flag cards** (for tracking penalties)
 
 ### Points of Sail & Hex Geometry
@@ -71,12 +72,16 @@ Wind direction is set along hex grid axes. The 6 hex directions relative to the 
 5. The player assigned **boat #1** is the Starting Player.
 6. The starting player places their boat on a hex anywhere in the pre-start area at any [point of sail](#term-points-of-sail) and at any starting speed (from Speed 0 up to the Point of Sail's maximum speed). Then place boat #2, etc. Each subsequent boat must be placed at least 2 hexes away from any previously placed boat.
 
-### Starting Line Layout (Flat-Topped Hexes)
-On a flat-topped hex grid, adjacent horizontal hexes are staggered (forming a zig-zag pattern). 
+### Starting Line Layout (Flat-Topped Hexes — Vertical Columns)
+On a flat-topped hex grid arranged in vertical columns, North (0°) and South (180°) move straight up and down along vertical columns, while adjacent columns stagger diagonally. 
 
 With wind blowing straight down the board (North to South / 0° to 180°), the starting line is defined as follows:
-- **[Pin Mark](#term-pin-mark) ([Port](#term-port) / Left End)** and **[Committee Boat](#term-committee-boat) ([Starboard](#term-starboard) / Right End)** are placed in hexes across the board from each other at the same general horizontal rank.
 - **The Starting Line**: The imaginary straight line segment connecting the center of the [Pin Mark](#term-pin-mark) hex to the center of the [Committee Boat](#term-committee-boat) hex.
+- **Dynamic Line Length**: The length of the starting line is determined during setup:
+  $$\text{Start Line Length (hexes)} = \text{Number of Entered Boats} + \mathbf{1d6}$$
+  * *Committee Boat* is placed at `(0, 0)`.
+  * *Pin Mark* is placed $L$ hexes to the left at `(-L, 0)`.
+  * *Course Axis (Marks)*: Buoys are placed along column $q = -L \div 2$ to align with the center of the line.
 - **Line Boundaries**:
   - **Pre-Start Area**: All hexes lying entirely on the South ([downwind](#term-leeward)) side of the starting line segment.
   - **Course Side**: All hexes lying entirely on the North ([upwind](#term-windward)) side of the starting line segment.
@@ -104,9 +109,9 @@ To legally complete a race, boats must follow official Sailing Instructions (RRS
   2. **Leg 2 (Downwind)**: Windward Mark ➔ [Leeward Mark](#term-leeward) *(round leaving mark to [Port](#term-port) / Left)*.
   3. **Leg 3 (Upwind Sprint)**: Leeward Mark ➔ Finish Line *(Start Line)*.
 
-#### ⚡ Course 2: Beginner Sprint (2 Legs — 15–20 Mins)
-*A fast introductory race designed for learning points of sail and maneuver planning.*
-- **[Windward Mark](#term-windward)**: Placed 6 hexes upwind (North) of the starting line.
+#### ⚡ Course 2: Beginner Sprint (2 Legs — 10–15 Mins)
+*A fast, action-packed introductory race designed for rapid tabletop play and learning points of sail.*
+- **[Windward Mark](#term-windward)**: Placed 4 hexes upwind (North) of the starting line (`pos: [2, -4]`).
 - **Leg Sequence**:
   1. **Leg 1 (Upwind)**: Start Line ➔ [Windward Mark](#term-windward) *(round leaving mark to [Port](#term-port) / Left)*.
   2. **Leg 2 (Downwind Finish)**: Windward Mark ➔ Downwind Finish Line *(Start Line)*.
@@ -143,16 +148,42 @@ For quick 4-player games that finish in **15 to 20 minutes max**, use these stre
   - **OCS [Right-of-Way](#term-right-of-way)**: A boat returning to the pre-start side after starting early ([OCS](#term-ocs)) has **no [Right-of-Way](#term-right-of-way)** and must [keep clear](#term-keep-clear) of all boats that started legally.
 
 ### Phase 2: Wind Phase (Optional)
-At the start of each round during the weather phase:
-1. Move all active Wind cards downwind by one zone. Discard any Wind card pushed out of zones 5 and 6.
-2. Draw new Wind cards for zones 1 and 2 from the Wind deck.
+At the start of each round—**before** players plan their action cards in the Planning Phase:
+1. Draw **1 card** from the Wind Deck (or roll **1d6**; see below) to set the global wind direction for that round.
+2. Adjust the **Global Wind Direction Marker** at the top of the board accordingly.
 
-#### Wind Card Types & Effects
-- **Steady**: No change to wind conditions in this zone.
-- **Puff**: Gives +1 Speed to any boat moving through or starting in this zone.
-- **Shift (Left)**: Rotates wind direction counter-clockwise by 60° (1 hex side) in this zone.
-- **Shift (Right)**: Rotates wind direction clockwise by 60° (1 hex side) in this zone.
-- **Puff Shift (Left / Right)**: Combines a Puff (+1 Speed) with a wind shift in the specified direction.
+#### Global Wind States & Limits
+Global wind can only ever be in one of **three states**:
+* **Base Wind (0° / Center)**: Wind blows straight down the board (North to South).
+* **Left Shift (300° / -60°)**: Wind blows from 300° (1 hex side counter-clockwise).
+* **Right Shift (60° / +60°)**: Wind blows from 60° (1 hex side clockwise).
+
+> [!IMPORTANT]
+> **Hard Limit:** The wind can **never** shift more than 60° (1 hex side) away from the Base Wind (0°). If a shift is drawn/rolled that would exceed this limit, the wind direction does not change and remains capped at that limit.
+
+#### Wind Card Deck Composition (10 Cards)
+* **4x Steady**: Wind direction remains at its current state.
+* **2x Shift Left**: Shift global wind 60° counter-clockwise (max 300°).
+* **2x Shift Right**: Shift global wind 60° clockwise (max 60°).
+* **2x Puff**: Global wind direction remains unchanged, but all boats get **+1 Speed** this round (up to their current Point of Sail's max speed + 1).
+
+#### Alternative: 2d6 Wind Roll Table
+If playing without the Wind Deck, roll **2d6** at the start of each round and consult the following table:
+
+| 2d6 Roll | Wind Event | Description |
+|---|---|---|
+| **2** | **Puff + Shift Left** | All boats get **+1 Speed** this round. Global wind shifts 60° counter-clockwise (max 300°). |
+| **3–4** | **Shift Left** | Global wind shifts 60° counter-clockwise (max 300°). |
+| **5–9** | **Steady** | Wind direction remains at its current heading. |
+| **10–11** | **Shift Right** | Global wind shifts 60° clockwise (max 60°). |
+| **12** | **Puff + Shift Right** | All boats get **+1 Speed** this round. Global wind shifts 60° clockwise (max 60°). |
+
+#### Wind Forecast (Barometer Mechanic)
+To reward strategic anticipation and eliminate surprise wind shifts, play with the **Wind Forecast** rule:
+* **Pre-Rolling the Barometer**: At the **end of each round** (Phase 4), roll **2d6** to determine the **Forecasted Wind** for the *next* round.
+* **Forecast Marker**: Place a Forecast Marker on the Compass Rose indicating the predicted wind direction/event for next turn.
+* **Tactical Planning**: During Phase 3 (Planning Phase), all players see the forecasted wind shift and can program their 4 face-down action cards to take advantage of the coming shift!
+* **Resolving Phase 2**: At the start of Phase 2 (Wind Phase) of the next round, the global wind automatically shifts to the forecasted state, and a new forecast is rolled for the following round.
 
 ### Phase 3: Planning Phase
 - Every round, players receive **4 Action slots** during the planning phase.
@@ -273,12 +304,22 @@ In each individual race, boats receive points matching their finishing order:
 * **DSQ** (Disqualified): Crosses the finish line holding a Red Flag card, incurs a 2nd penalty, or leaves the board.
 * **[OCS](#term-ocs)** (On Course Side): Fails to re-cross the start line legally after starting early.
 
+### Dead Heat Finishing Ties (RRS A7)
+In Cardboard Regatta, boats execute action steps sequentially based on initiative during Phase 4. If a boat crosses the finish line on Action Step 2, it finishes ahead of a boat crossing on Action Step 3. 
+
+However, if two or more boats cross the finish line on the **exact same Action Step** of the same round:
+* **Splitting Points (RRS A7)**: The points for the tied finishing position and the position(s) immediately below it are summed together and divided equally among the tied boats:
+  * **2-Way Tie for 1st Place**: $(1 + 2) \div 2 = \mathbf{1.5\text{ points each}}$.
+  * **2-Way Tie for 2nd Place**: $(2 + 3) \div 2 = \mathbf{2.5\text{ points each}}$.
+  * **3-Way Tie for 2nd Place**: $(2 + 3 + 4) \div 3 = \mathbf{3.0\text{ points each}}$.
+* **Next Finisher**: The next boat to finish receives the points for the position following the tied places (e.g. after a 2-way tie for 1st place, the next boat receives 3rd place / 3 points).
+
 ### Series Regatta Scoring
 - **Series Score**: A boat’s regatta score is the total sum of points across all races in the series.
 - **Throwouts (Discards)**: If **4 or more races** are played in a regatta series, each boat discards (excludes) its single worst race score from its total.
 - **Winner**: The boat with the **lowest cumulative series score** wins the regatta!
 
-### Tie-Breaking (RRS A8)
+### Series Tie-Breaking (RRS A8)
 If two or more boats are tied in total series points:
 1. **Most High Finishes**: The tie is awarded to the boat with the most 1st-place finishes. If still tied, the boat with the most 2nd-place finishes, and so on.
 2. **Last Race Standings**: If still tied, the tie is broken by whichever tied boat finished higher in the final race of the series.

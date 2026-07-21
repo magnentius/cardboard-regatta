@@ -1,0 +1,13 @@
+# Simulation log outputs
+*.log
+sim_output.log
+
+# Python cache & temp files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# OS metadata files
+.DS_Store
+Thumbs.db

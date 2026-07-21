@@ -1,0 +1,23 @@
+{
+  "name": "Course 2: Beginner Sprint (2 Legs)",
+  "board_bounds": {
+    "q_min": -10, "q_max": 10,
+    "r_min": -12, "r_max": 10
+  },
+  "start_line": {
+    "committee_boat": [0, 0],
+    "pin_mark": [-4, 0]
+  },
+  "marks": [
+    {
+      "id": "windward_mark",
+      "name": "Windward Mark",
+      "pos": [-2, -4],
+      "rounding_direction": "Port"
+    }
+  ],
+  "finish_line": {
+    "committee_boat": [0, 0],
+    "pin_mark": [-4, 0]
+  }
+}
