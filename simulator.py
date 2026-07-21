@@ -143,6 +143,14 @@ class Boat:
         self.finish_rank = 0
         self.history = [start_pos]
 
+    @property
+    def momentum(self):
+        return self.speed
+
+    @momentum.setter
+    def momentum(self, value):
+        self.speed = value
+
     def get_pos_of_sail(self, wind):
         """Returns Point of Sail string based on facing relative to wind."""
         diff = (self.facing - wind) % 6
@@ -155,17 +163,20 @@ class Boat:
         else:
             return "Run"
 
-    def get_max_speed(self, wind):
-        """Returns max speed polar limit for current Point of Sail."""
+    def get_max_momentum(self, wind):
+        """Returns max momentum limit for current Point of Sail."""
         pos = self.get_pos_of_sail(wind)
         if pos == "Irons":
             return 1
         elif pos == "Close-Hauled":
-            return 3
-        elif pos == "Broad Reach":
             return 4
-        else: # Run
-            return 3
+        elif pos == "Broad Reach":
+            return 5
+        else:
+            return 4
+
+    def get_max_speed(self, wind):
+        return self.get_max_momentum(wind)
 
 # -----------------------------------------------------------------------------
 # Improved Heuristic AI Planner
@@ -802,18 +813,28 @@ class RegattaSimulator:
                     if b.speed == 0 or b.get_pos_of_sail(self.global_wind) == "Irons":
                         self.log(f"❌ {b.name} cannot Head Up (Speed 0 or Irons)! Action discarded.")
                     else:
+                        vec = DIRECTIONS[b.facing]
+                        b.pos = (b.pos[0] + vec[0], b.pos[1] + vec[1])
+                        b.history.append(b.pos)
+                        self.metrics["total_hexes_sailed"] += 1
                         diff = (b.facing - self.global_wind) % 6
                         if diff in (1, 2): b.facing = (b.facing - 1) % 6
                         elif diff in (4, 5): b.facing = (b.facing + 1) % 6
-                        self.log(f"🔄 {b.name} plays Head Up. Heading: {DIR_NAMES[b.facing]}.")
+                        self.log(f"🔄 {b.name} plays Head Up. Moves to {b.pos}. Heading: {DIR_NAMES[b.facing]}.")
                 elif card == "Bear Off":
+                    if b.speed >= 1:
+                        vec = DIRECTIONS[b.facing]
+                        b.pos = (b.pos[0] + vec[0], b.pos[1] + vec[1])
+                        b.history.append(b.pos)
+                        self.metrics["total_hexes_sailed"] += 1
                     diff = (b.facing - self.global_wind) % 6
                     if diff in (1, 2): b.facing = (b.facing + 1) % 6
                     elif diff in (4, 5): b.facing = (b.facing - 1) % 6
                     elif diff == 0: b.facing = (b.facing + 1) % 6
-                    self.log(f"🔄 {b.name} plays Bear Off. Heading: {DIR_NAMES[b.facing]}.")
+                    move_str = f"Moves to {b.pos}. " if b.speed >= 1 else "Pivots in place. "
+                    self.log(f"🔄 {b.name} plays Bear Off. {move_str}Heading: {DIR_NAMES[b.facing]}.")
                 elif card == "Tack":
-                    if b.speed <= 1 or b.get_pos_of_sail(self.global_wind) != "Close-Hauled":
+                    if b.speed <= 0 or b.get_pos_of_sail(self.global_wind) != "Close-Hauled":
                         self.log(f"❌ {b.name} illegal Tack! Action discarded.")
                     else:
                         diff = (b.facing - self.global_wind) % 6
@@ -832,8 +853,15 @@ class RegattaSimulator:
                         self.metrics["gybes_count"] += 1
                         self.log(f"🔄 {b.name} GYBES to {DIR_NAMES[b.facing]} ({b.tack_side} Tack).")
                 elif card == "Luff":
-                    b.speed = max(0, b.speed - 1)
-                    self.log(f"🛑 {b.name} plays Luff. Speed reduced to {b.speed}.")
+                    if b.speed >= 1:
+                        vec = DIRECTIONS[b.facing]
+                        b.pos = (b.pos[0] + vec[0], b.pos[1] + vec[1])
+                        b.history.append(b.pos)
+                        self.metrics["total_hexes_sailed"] += 1
+                        b.speed = max(0, b.speed - 1)
+                        self.log(f"🛑 {b.name} plays Luff. Moves to {b.pos}. Speed reduced to {b.speed}.")
+                    else:
+                        self.log(f"🛑 {b.name} plays Luff at Speed 0 in place. Speed remains 0.")
 
                 if b.is_returning_ocs and b.pos[1] > 0:
                     b.is_returning_ocs = False
