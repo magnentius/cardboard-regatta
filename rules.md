@@ -34,7 +34,7 @@
 
 ### Components
 - **Hex Grid Board** with integrated 6-direction **Compass Rose** (0°, 60°, 120°, 180°, 240°, 300°)
-- **Boat Tokens** for each player (with 6-direction facing indicators and close-hauled [port](#term-port)/[starboard](#term-starboard) sides)
+- **Boat Tokens**: 3 double-sided tokens per boat indicating [Point of Sail](#term-points-of-sail) and Tack: Token 1 (Close-Hauled), Token 2 (Broad Reach), and Token 3 (Run). Side A shows [Port Tack](#term-port) (outlined in **Red**), and Side B shows [Starboard Tack](#term-starboard) (outlined in **Green**).
 - **Course Mark Tokens** (Windward Mark, Leeward Mark, Reach Mark / Wing Mark, Committee Boat, Pin Mark)
 - **Action Deck** for each player (containing sequence maneuver cards: `Sail`, `Tack`, `Gybe`, `Bear Off`, `Head Up`, `Luff`)
 - **Global Wind Direction Marker** (placed on the board's Compass Rose)
@@ -54,7 +54,8 @@ Wind direction is set along hex grid axes. The 6 hex directions relative to the 
 #### Port vs. Starboard Tack
 - **[Starboard Tack](#term-starboard)**: Wind is blowing across the boat's starboard (right) side (facing 60°, 120°, or 180° relative to wind).
 - **[Port Tack](#term-port)**: Wind is blowing across the boat's port (left) side (facing 300°, 240°, or 180° relative to wind).
-- **Token Flipping**: Flip your boat token to its matching side ([Port](#term-port) or [Starboard](#term-starboard)) whenever your boat changes tacks via a [`Tack`](#term-tack) or [`Gybe`](#term-gybe) maneuver.
+- **[Tack State in Irons](#term-irons)**: For game purposes, a boat in [Irons](#term-irons) (facing 0° North into the wind) maintains the **tack she was on** ([Port](#term-port) or [Starboard](#term-starboard)) immediately prior to entering Irons for both token display and [Right-of-Way](#term-right-of-way) rules.
+- **Token Swapping & Flipping**: Each boat has 3 double-sided tokens corresponding to the three sailing [Points of Sail](#term-points-of-sail) (Close-Hauled, Broad Reach, and Run). Side A shows [Port Tack](#term-port) (outlined in **Red**), and Side B shows [Starboard Tack](#term-starboard) (outlined in **Green**). Swap or flip your active boat token whenever your boat changes Point of Sail or changes tacks via a [`Tack`](#term-tack) or [`Gybe`](#term-gybe) maneuver.
 
 > [!TIP]
 > **How to Escape Irons:** When your boat is in [Irons](#term-irons) (facing 0° North), you cannot play `Sail` or [`Head Up`](#term-head-up). To get out of Irons, play a **[`Bear Off`](#term-bear-off)** action card (which turns your boat 60° to [Close-Hauled](#term-close-hauled), even at Speed 0). Alternatively, play **[`Luff`](#term-luff)** to spill wind and remain in place until you can bear off.
