@@ -7,6 +7,9 @@
 - [Setup & Course Layout](#setup--course-layout)
   - [Race Setup](#race-setup)
   - [Starting Line Layout](#starting-line-layout-flat-topped-hexes)
+  - [Sailing Instructions](#sailing-instructions-sailing-the-course)
+  - [Example Courses](#example-courses)
+  - [Fast-Play Rules](#fast-play-rules-1520-min-sprint)
 - [Turn Structure & Gameplay Phases](#turn-structure--gameplay-phases)
   - [Phase 1: Pre-Start Sequence](#phase-1-pre-start-sequence)
   - [Phase 2: Wind Phase (Optional)](#phase-2-wind-phase-optional)
@@ -22,6 +25,7 @@
   - [Disqualification (DSQ) & Leaving the Board](#disqualification-dsq--leaving-the-board)
 - [Finishing the Race](#finishing-the-race)
 - [Scoring System (RRS Appendix A)](#scoring-system-rrs-appendix-a)
+- [Glossary of Nautical & Racing Terms](#glossary-of-nautical--racing-terms)
 
 ---
 
@@ -33,6 +37,7 @@
 - **Boat tokens** for each player (5 tokens per boat, close-hauled port/starboard on opposite sides)
 - **Action deck** for each player
 - **Wind deck**
+- **Speed Trackers** (Player mats with speed sliders or d6 dice to track speed 0–4)
 - **d6 die** (for pre-start turn counter)
 - **Red Flag cards** (for tracking penalties)
 
@@ -43,10 +48,15 @@ Wind direction is set along hex grid axes. The 6 hex directions relative to the 
 - **Close-Hauled (60° / 300°)**: Pointed 60° off the wind (2 hex directions).
 - **Broad Reach (120° / 240°)**: Pointed 120° off the wind (2 hex directions).
 - **Run (180°)**: Pointed directly downwind (1 hex direction).
+- **Hex Alignment**: Boat tokens are placed in hexes pointing directly toward one of the 6 flat hex sides (edges).
 
 #### Port vs. Starboard Tack
 - **Starboard Tack**: Wind is blowing across the boat's starboard (right) side (facing 60°, 120°, or 180° relative to wind).
 - **Port Tack**: Wind is blowing across the boat's port (left) side (facing 300°, 240°, or 180° relative to wind).
+- **Token Flipping**: Flip your boat token to its matching side (Port or Starboard) whenever your boat changes tacks via a `Tack` or `Gybe` maneuver.
+
+> [!TIP]
+> **How to Escape Irons:** When your boat is in Irons (facing 0° North), you cannot play `Sail` or `Head Up`. To get out of Irons, play a **`Bear Off`** action card (which turns your boat 60° to Close-Hauled, even at Speed 0). Alternatively, play **`Luff`** to spill wind and remain in place until you can bear off.
 
 ---
 
@@ -74,6 +84,49 @@ With wind blowing straight down the board (North to South / 0° to 180°), the s
     - **1–3**: The boat is on the **Course Side (OCS)**.
     - **4–6**: The boat is in the **Pre-Start Area**.
   - **Crossing the Line**: A boat legally starts when its movement path moves from a pre-start hex across the imaginary line segment (between the Pin Mark and Committee Boat) into a course hex.
+
+### Sailing Instructions (Sailing the Course)
+To legally complete a race, boats must follow official Sailing Instructions (RRS Rule 28):
+
+1. **Start Legally**: Pass through the starting line segment from the pre-start area (South) to the course side (North) after the start gun fires (or re-cross legally if OCS).
+2. **Mark Rounding Direction (Default: Leave to Port)**: Unless specified otherwise by the course layout, all marks must be rounded **leaving the mark to Port (Left)** (counter-clockwise rounding).
+3. **Course Leg Sequence (The String Rule)**: Boats must round each mark in the exact sequence specified by the course legs (e.g., Leg 1 ➔ Leg 2 ➔ Leg 3). A boat’s track, if drawn as a string from start to finish, must wrap around the required side of each mark in sequence.
+4. **Finish Legally**: Cross the finish line segment between the two finish marks in the direction indicated by the final course leg.
+
+### Example Courses
+
+#### 🏆 Course 1: Standard Windward-Leeward (3 Legs — 30–40 Mins)
+*The classic competitive regatta layout testing upwind tacking and downwind tactical positioning.*
+- **Windward Mark**: Placed 10 hexes upwind (North) of the starting line.
+- **Leeward Mark**: Placed 10 hexes downwind (South) of the starting line (below the start line).
+- **Leg Sequence**:
+  1. **Leg 1 (Upwind)**: Start Line ➔ Windward Mark *(round leaving mark to Port / Left)*.
+  2. **Leg 2 (Downwind)**: Windward Mark ➔ Leeward Mark *(round leaving mark to Port / Left)*.
+  3. **Leg 3 (Upwind Sprint)**: Leeward Mark ➔ Finish Line *(Start Line)*.
+
+#### ⚡ Course 2: Beginner Sprint (2 Legs — 15–20 Mins)
+*A fast introductory race designed for learning points of sail and maneuver planning.*
+- **Windward Mark**: Placed 6 hexes upwind (North) of the starting line.
+- **Leg Sequence**:
+  1. **Leg 1 (Upwind)**: Start Line ➔ Windward Mark *(round leaving mark to Port / Left)*.
+  2. **Leg 2 (Downwind Finish)**: Windward Mark ➔ Downwind Finish Line *(Start Line)*.
+
+#### 📐 Course 3: Olympic Triangle (3 Legs — 35–45 Mins)
+*An advanced course testing broad reach speed, gybing maneuvers, and mark rounding strategy.*
+- **Windward Mark**: Placed 8 hexes North (0° upwind) of the starting line.
+- **Reach Mark (Wing)**: Placed 6 hexes South-East (120°) from the Windward Mark.
+- **Leeward Mark**: Placed 6 hexes South-West (240°) from the Reach Mark.
+- **Leg Sequence**:
+  1. **Leg 1 (Upwind)**: Start Line ➔ Windward Mark.
+  2. **Leg 2 (Reaching Triangle)**: Windward Mark ➔ Reach Mark ➔ Leeward Mark.
+  3. **Leg 3 (Upwind Finish)**: Leeward Mark ➔ Finish Line.
+
+### Fast-Play Rules (15–20 Min Sprint)
+For quick 4-player games that finish in **15 to 20 minutes max**, use these streamlined pacing rules:
+
+1. **Sprint Course (2 Legs)**: Play a 2-leg course (Leg 1 Upwind to a 6-to-8 hex mark ➔ Leg 2 Downwind Finish at the Start Line).
+2. **Instant Start**: Skip the 3-turn pre-start countdown. Place all boats in the Pre-Start Area at **Speed 2 or 3** facing their chosen point of sail. The start gun fires immediately on **Round 1**.
+3. **Simultaneous 45-Second Timer**: Use a 45-second timer during the Planning Phase for all players to select their 4 action cards simultaneously.
 
 ---
 
@@ -108,8 +161,8 @@ At the start of each round during the weather phase:
 #### Actions Summary
 | Action | Qty | Valid Points of Sail (POS) | Requirements & Effects |
 |---|---|---|---|
-| **Head Up** | x2 | Any except Irons | Rotate facing 60° towards the wind. Requires Speed > 0. |
-| **Bear Off** | x2 | Any except Run | Rotate facing 60° away from the wind. (Can be played at Speed 0 to exit Irons). |
+| **Head Up** | x2 | Any except Irons | Rotate facing 60° towards the wind (0° North). Requires Speed > 0. |
+| **Bear Off** | x2 | Any except Run | Rotate facing 60° away from the wind (180° South). (Can be played at Speed 0 to exit Irons). |
 | **Tack** | x1 | Close-Hauled | Rotate facing 120° across the wind to the opposite tack. Requires Speed > 1; reduces Speed by 1. |
 | **Gybe** | x1 | Run | Flip tack (Port/Starboard) while running downwind. |
 | **Luff** | x2 | Close-Hauled, Broad-Reach, or Irons | Reduce Speed by 1 without changing facing. (Can be played at Speed 0). |
@@ -138,6 +191,9 @@ Movement is executed in 4 **Action Steps** (Action 1 through Action 4):
 1. For each Action Step, all players reveal their planned card for that step in Initiative order.
 2. Active player executes their card's movement and rotation. **Maneuver Resolution Order**: Move 1 hex forward in your current facing direction first, then apply the card's rotation/heading change.
 3. If an action is **illegal** for the current POS or speed state, it is discarded without effect (the boat coasts forward 1 hex if Speed > 0).
+
+#### Round Cleanup
+At the end of each round (after Action 4), all players retrieve their played action cards back into their hand for the next round (except any cards set aside to clear a Red Flag).
 
 ---
 
@@ -224,3 +280,34 @@ In each individual race, boats receive points matching their finishing order:
 If two or more boats are tied in total series points:
 1. **Most High Finishes**: The tie is awarded to the boat with the most 1st-place finishes. If still tied, the boat with the most 2nd-place finishes, and so on.
 2. **Last Race Standings**: If still tied, the tie is broken by whichever tied boat finished higher in the final race of the series.
+
+---
+
+## Glossary of Nautical & Racing Terms
+> *"Beyond the edge of the chart there be dragons, but also the joy of discovery."*
+
+For players new to sailing, here is a quick reference guide to common sailing and racing terms used in Cardboard Regatta:
+
+| Term | Definition |
+|---|---|
+| **Port** | The **left** side of a boat when facing forward towards the bow. |
+| **Starboard** | The **right** side of a boat when facing forward towards the bow. |
+| **Bow** | The front end of the boat. |
+| **Stern** | The back end of the boat. |
+| **Windward** | Upwind; closer to the direction the wind is blowing from (towards North / 0°). |
+| **Leeward** | Downwind; further in the direction the wind is blowing toward (towards South / 180°). |
+| **Points of Sail** | The angle of a boat relative to the wind direction (Irons, Close-Hauled, Broad Reach, Run). |
+| **Irons** | Pointed directly into the wind (0°). Speed drops by 1 each turn and you cannot play `Sail`. Play a `Bear Off` card to turn out of Irons. |
+| **Close-Hauled** | Sailing as close to the wind direction as possible (60° / 300°). |
+| **Broad Reach** | Sailing diagonally away from the wind direction (120° / 240°). Maximum boat speed (4). |
+| **Run** | Sailing directly downwind with the wind coming over the stern (180°). |
+| **Tack** | Turning the bow (front) of the boat through the wind to change from one side to the other. |
+| **Gybe (Jibe)** | Turning the stern (back) of the boat through the wind while sailing downwind. |
+| **Head Up** | Steering the boat closer toward the wind direction (60° turn). |
+| **Bear Off** | Steering the boat further away from the wind direction (60° turn). |
+| **Luff** | Easing sails to spill wind and slow down without changing facing direction. |
+| **Mark** | An anchored buoy in the water that boats must round during the race. |
+| **Pin Mark** | The orange buoy marking the left (Port) end of the starting line. |
+| **Committee Boat** | The official race boat anchored at the right (Starboard) end of the starting line. |
+| **OCS (On Course Side)** | Crossing the starting line onto the course side before the start gun fires (starting early). |
+| **Wind Shadow** | The 2-hex blanketed area downwind of a boat where wind velocity and max speed are reduced. |
