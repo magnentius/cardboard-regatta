@@ -138,7 +138,8 @@ class Boat:
         self.is_returning_ocs = False
         self.finished = False
         self.disqualified = False
-        self.red_flags = 0
+        self.protests = 0
+        self.red_flags = 0  # Backward compatibility alias
         self.finish_rank = 0
         self.history = [start_pos]
 
@@ -746,6 +747,7 @@ class RegattaSimulator:
 
         # Apply Speed Adjustments
         for b in self.boats:
+            b.received_protest_this_round = False
             if b.finished or b.disqualified:
                 continue
                 
@@ -782,6 +784,7 @@ class RegattaSimulator:
             
             for b in active_boats:
                 card = plans[b.boat_id][step]
+                b.current_card = card
                 prev_pos = b.pos
                 prev_facing = b.facing
                 
@@ -898,6 +901,53 @@ class RegattaSimulator:
                                 self.log(f"🎲 1d6 Split Finish Hex Roll: {finish_roll} -> FINISH SIDE (4-6)! 🏁 {b.name} CROSSES THE FINISH LINE! (Step {step + 1})")
                             else:
                                 self.log(f"🎲 1d6 Split Finish Hex Roll: {finish_roll} -> COURSE SIDE (1-3). {b.name} remains on course side at (q={b.pos[0]}, r=0).")
+            
+            # Step-by-step hex collision & Right-of-Way protest resolution
+            self._resolve_step_collisions(step)
+
+    def _resolve_step_collisions(self, step):
+        """Checks for hex collisions during an Action Step and issues Protest Cards based on RRS Rules 10-14."""
+        occupied = {}
+        for b in self.boats:
+            if b.finished or b.disqualified:
+                continue
+            occupied.setdefault(b.pos, []).append(b)
+
+        for hex_pos, boats_in_hex in occupied.items():
+            if len(boats_in_hex) < 2:
+                continue
+            
+            b1, b2 = boats_in_hex[0], boats_in_hex[1]
+            c1 = getattr(b1, "current_card", "")
+            c2 = getattr(b2, "current_card", "")
+
+            foul_boat = None
+            row_boat = None
+            rule_violated = "RRS Right-of-Way"
+
+            if c1 == "Tack" and c2 != "Tack":
+                foul_boat, row_boat, rule_violated = b1, b2, "Rule 13 (Tacking)"
+            elif c2 == "Tack" and c1 != "Tack":
+                foul_boat, row_boat, rule_violated = b2, b1, "Rule 13 (Tacking)"
+            elif b1.tack_side == "Starboard" and b2.tack_side == "Port":
+                foul_boat, row_boat, rule_violated = b2, b1, "Rule 10 (Starboard vs Port)"
+            elif b2.tack_side == "Starboard" and b1.tack_side == "Port":
+                foul_boat, row_boat, rule_violated = b1, b2, "Rule 10 (Starboard vs Port)"
+            else:
+                if b1.pos[1] < b2.pos[1]:  # b1 is further North (Windward)
+                    foul_boat, row_boat, rule_violated = b1, b2, "Rule 11 (Windward vs Leeward)"
+                elif b2.pos[1] < b1.pos[1]:
+                    foul_boat, row_boat, rule_violated = b2, b1, "Rule 11 (Windward vs Leeward)"
+                else:
+                    foul_boat, row_boat, rule_violated = b2, b1, "Rule 12 (Clear Astern)"
+
+            if foul_boat:
+                if not getattr(foul_boat, "received_protest_this_round", False):
+                    foul_boat.received_protest_this_round = True
+                    foul_boat.protests += 1
+                    foul_boat.red_flags = foul_boat.protests
+                    self.metrics["protests_count"] = self.metrics.get("protests_count", 0) + 1
+                    self.log(f"🚩 PROTEST! {foul_boat.name} violated {rule_violated} against {row_boat.name} at {hex_pos}! Incurs a Protest Card (Max 1 per Round).")
 
     def _print_final_standings(self):
         self.log(f"\n==================================================================")

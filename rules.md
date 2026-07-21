@@ -19,10 +19,10 @@
   - [Wind Shadow](#wind-shadow)
   - [Rounding Marks](#rounding-marks)
   - [Fouling & Right-of-Way (ROW) Rules](#fouling--right-of-way-row-rules)
-- [Red Flags & Penalties](#red-flags--penalties)
-  - [Incurring a Red Flag](#incurring-a-red-flag)
-  - [Clearing a Red Flag](#clearing-a-red-flag)
-  - [Disqualification (DSQ) & Leaving the Board](#disqualification-dsq--leaving-the-board)
+- [Protests & Penalties](#protests--penalties)
+  - [Incurring a Protest Card](#incurring-a-protest-card)
+  - [Clearing a Protest](#clearing-a-protest)
+  - [No Disqualification (Never DSQ) & Leaving the Board](#no-disqualification-never-dsq--leaving-the-board)
 - [Finishing the Race](#finishing-the-race)
 - [Scoring System (RRS Appendix A)](#scoring-system-rrs-appendix-a)
 - [Glossary of Nautical & Racing Terms](#glossary-of-nautical--racing-terms)
@@ -40,7 +40,7 @@
 - **Global Wind Direction Marker** (placed on the board's Compass Rose)
 - **Speed Die for each player** (a dedicated d6 die placed on the player mat to track boat speed 0–5)
 - **Two 2d6 Dice** (for global wind shift rolls, wind forecasts, and split hex rolls)
-- **Penalty / Red Flag Tokens** (for tracking RRS Appendix A penalties and discards)
+- **Protest Cards** (for tracking RRS Rule violations and penalty discards)
 
 ### Points of Sail & Hex Geometry
 Wind direction is set along hex grid axes. The 6 hex directions relative to the wind direction correspond to four [Points of Sail](#term-points-of-sail):
@@ -217,9 +217,10 @@ Movement is executed in 4 **Action Steps** (Action 1 through Action 4):
 1. For each Action Step, all players reveal their planned card for that step in Initiative order.
 2. Active player executes their card's movement and rotation. **Maneuver Resolution Order**: Move 1 hex forward in your current facing direction first, then apply the card's rotation/heading change.
 3. If an action is **illegal** for the current POS or speed state, it is discarded without effect (the boat coasts forward 1 hex if Speed > 0).
+4. **Instant Collision & ROW Resolution**: Collision checks and Right-of-Way evaluations occur **instantly during each Action Step**. If a boat enters a hex occupied by another boat (or both enter the same hex during an Action Step), a collision occurs immediately on that step and ROW rules determine who receives a Protest card.
 
 #### Round Cleanup
-At the end of each round (after Action 4), all players retrieve their played action cards back into their hand for the next round (except any cards set aside to clear a Red Flag).
+At the end of each round (after Action 4), all players retrieve their played action cards back into their hand for the next round (except any cards set aside to clear a Protest).
 
 ---
 
@@ -232,14 +233,14 @@ At the end of each round (after Action 4), all players retrieve their played act
 - **Movement Phase Effect**: If your boat *enters* a [Wind Shadow](#term-wind-shadow) during movement, its current Speed is immediately reduced by 1.
 
 ### Rounding Marks
-- **Ending in a Mark Hex**: If you end an Action Step or turn in a hex containing a [mark](#term-mark), you hit the mark and incur a **Red Flag card**.
-- **Passing Through a Mark**: If a boat moves *through* a hex containing a [mark](#term-mark) during an Action Step without ending its turn there, roll **1d6**. On a roll of **1**, the boat hits the mark and incurs a **Red Flag card**.
-- **Mark Penalty Limit**: A boat can receive a maximum of 1 Red Flag card per round from any individual mark.
+- **Ending in a Mark Hex**: If you end an Action Step or turn in a hex containing a [mark](#term-mark), you hit the mark and incur a **Protest card**.
+- **Passing Through a Mark**: If a boat moves *through* a hex containing a [mark](#term-mark) during an Action Step without ending its turn there, roll **1d6**. On a roll of **1**, the boat hits the mark and incurs a **Protest card**.
+- **Mark Penalty Limit**: A boat can receive a maximum of 1 Protest card per round from any individual mark.
 
 ### Fouling & Right-of-Way (ROW) Rules
 
-> [!NOTE]
-> **Tabletop Hex Grid Right-of-Way:** On a hex grid, relative boat positions are defined discretely by hex columns and lines, seamlessly translating World Sailing RRS Part 2 rules into five simple tabletop priorities:
+> [!IMPORTANT]
+> **The Golden Hex Collision Rule:** A Right-of-Way foul **ONLY occurs when two boats attempt to occupy or enter the exact same hex at the same time**. Whenever two boats collide in the same hex, Right-of-Way priorities (Rules 10–14) determine which boat was at fault and incurs the **Protest card**.
 
 | RRS Rule | Sailing Rule Name | Tabletop Hex Grid Definition | Right-of-Way (ROW) Priority |
 |---|---|---|---|
@@ -257,28 +258,37 @@ At the end of each round (after Action 4), all players retrieve their played act
 5. **Returning OCS Boat**: A boat returning to the pre-start side after starting early ([OCS](#term-ocs)) has no [Right-of-Way](#term-right-of-way) and must [keep clear](#term-keep-clear) of all boats that started legally.
 
 > [!IMPORTANT]
-> **Avoiding Contact (RRS Rule 14):** Having Right-of-Way does **not** give a boat permission to deliberately ram another boat. If a ROW boat could easily avoid contact but intentionally sails into a hex occupied by another boat to force a collision penalty, the ramming boat incurs the **Red Flag card** for failing to avoid contact.
+> **Avoiding Contact (RRS Rule 14):** Having Right-of-Way does **not** give a boat permission to deliberately ram another boat. If a ROW boat could easily avoid contact but intentionally sails into a hex occupied by another boat to force a collision penalty, the ramming boat incurs the **Protest card** for failing to avoid contact.
+
+#### Example Hex Movements & Foul Scenarios
+
+* **Example 1 (Rule 10: Starboard vs. Port Crossing)**: Boat A (Starboard Tack) and Boat B (Port Tack) are converging diagonally toward the same empty hex on an upwind leg. Both boats play `Sail` and attempt to enter that hex on the same action step. Because Starboard Tack has Right-of-Way, **Boat B (Port Tack) fouls Boat A and incurs a Protest card**.
+* **Example 2 (Rule 11: Windward vs. Leeward Collisions)**: Boat A (Windward) and Boat B (Leeward) are sailing close-hauled side-by-side in adjacent hex columns. Boat A has initiative and plays `Bear Off` + `Sail`, steering down into the hex currently occupied by Boat B. Because the Leeward boat has Right-of-Way, **Boat A (Windward) fouls Boat B and incurs a Protest card**.
+* **Example 3 (Rule 12: Overrunning a Boat Ahead Downwind)**: On a downwind leg (sailing South), Boat A is cruising ahead at Speed 2. Boat B is trailing directly behind in the same hex line at Speed 4. Boat B plays `Sail` + `Sail`, overrunning and ramming Boat A from behind. Because a boat coming from behind must keep clear of the boat ahead, **Boat B (Astern) fouls Boat A and incurs a Protest card**.
+* **Example 4 (Rule 13: Tacking into a Collision)**: Boat A plays a [`Tack`](#term-tack) card and moves forward into the **exact same hex** currently occupied by Boat B (or both attempt to enter the same empty hex on the same step). Because a tacking boat has no Right-of-Way under RRS Rule 13, **Boat A (Tacking) fouls Boat B and incurs a Protest card**. *(Note: Tacking into an empty hex 1 space ahead of another boat without colliding is 100% legal!).*
 
 ---
 
-## Red Flags & Penalties
+## Protests & Penalties
 > *"Good judgment comes from experience, and experience comes from bad judgment."* — Mark Twain
 
-### Incurring a Red Flag
-A boat takes a **Red Flag card** if it:
+### Incurring a Protest Card
+A boat takes a **Protest card** if it:
 - Ends an Action Step or turn in a hex containing a [mark](#term-mark) on the current leg.
 - Moves through a mark's hex and rolls a **1** on **1d6**.
-- Violates [Right-of-Way](#term-right-of-way) and collides with or forces another boat to alter course into the same hex.
+- Violates [Right-of-Way](#term-right-of-way) and collides with another boat into the same hex.
 
-### Clearing a Red Flag
-- A player **must clear their Red Flag card as soon as able** (on the very next Planning Phase).
+> [!NOTE]
+> **Protest Limit (Max 1 per Round):** A boat can incur a maximum of **1 Protest Card per round**, regardless of how many collisions or mark contacts occur during that round.
+
+### Clearing a Protest
+- A player **must clear their Protest card as soon as able** (on the very next Planning Phase).
 - **Random Discard Procedure**: During the Planning Phase, the player shuffles their maneuver deck face-down and draws **2 random action cards** to set aside for the round (leaving only 2 active action slots to plan for that round).
-- Once the round is complete and the Red Flag card is removed, return the 2 discarded cards to the player's maneuver deck.
+- Once the round is complete and the 2-card discard penalty is resolved, return the 2 discarded cards to the player's maneuver deck and remove the Protest card.
 
-### Disqualification (DSQ) & Leaving the Board
-- A boat holding an uncleared Red Flag card that incurs a **second penalty** is **immediately disqualified**.
-- A boat holding an uncleared Red Flag card that crosses the finish line to finish is **immediately disqualified**.
-- If a boat moves off the hex grid boundary, it is **immediately disqualified**.
+### No Disqualification (Never DSQ) & Leaving the Board
+- **No Player Elimination (Never DSQ)**: In *Cardboard Regatta*, boats are **never disqualified** for incurring fouls or holding Protest cards! If a boat incurs another foul while holding a Protest card, she simply continues holding a Protest card and performs the 2-card random discard penalty again on her next turn. Every player stays in the race to the finish line!
+- **Leaving the Board**: If a boat moves off the physical hex grid boundary, she must spend her next action step using `Bear Off` or `Head Up` to return onto the board.
 
 ---
 
@@ -311,7 +321,7 @@ In each individual race, boats receive points matching their finishing order:
 | **DNF / DSQ / [OCS](#term-ocs)** | Total number of entered boats + 1 point |
 
 * **DNF** (Did Not Finish): Failed to complete all course legs.
-* **DSQ** (Disqualified): Crosses the finish line holding a Red Flag card, incurs a 2nd penalty, or leaves the board.
+* **DSQ** (Disqualified): Crosses the finish line holding a Protest card, incurs a 2nd penalty, or leaves the board.
 * **[OCS](#term-ocs)** (On Course Side): Fails to re-cross the start line legally after starting early.
 
 ### Dead Heat Finishing Ties (RRS A7)
