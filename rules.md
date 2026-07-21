@@ -9,7 +9,7 @@
   - [Starting Line Layout](#starting-line-layout-flat-topped-hexes--vertical-columns)
   - [Sailing Instructions](#sailing-instructions-sailing-the-course)
   - [Example Courses](#example-courses)
-  - [Fast-Play Rules](#fast-play-rules-1520-min-sprint)
+  - [Fast-Play / Quick-Start Rules](#fast-play--quick-start-rules-1015-min-sprint)
 - [Turn Structure & Gameplay Phases](#turn-structure--gameplay-phases)
   - [Phase 1: Pre-Start Sequence](#phase-1-pre-start-sequence)
   - [Phase 2: Wind Phase (Optional)](#phase-2-wind-phase-optional)
@@ -127,12 +127,11 @@ To legally complete a race, boats must follow official Sailing Instructions (RRS
   2. **Leg 2 (Reaching Triangle)**: Windward Mark ➔ Reach Mark *(leave to [Port](#term-port) / Left)* ➔ [Leeward Mark](#term-leeward) *(leave to [Port](#term-port) / Left)*.
   3. **Leg 3 (Upwind Finish)**: Leeward Mark ➔ Finish Line *(Start Line)*.
 
-### Fast-Play Rules (15–20 Min Sprint)
-For quick 4-player games that finish in **15 to 20 minutes max**, use these streamlined pacing rules:
+### Fast-Play / Quick-Start Rules (10–15 Min Sprint)
+For introductory games or fast tabletop sessions that finish in **10 to 15 minutes max**, use these streamlined rules:
 
-1. **Sprint Course (2 Legs)**: Play a 2-leg course (Leg 1 Upwind to a 6-to-8 hex mark ➔ Leg 2 Downwind Finish at the Start Line).
-2. **Instant Start**: Skip the 3-turn pre-start countdown. Place all boats in the Pre-Start Area at **Speed 2 or 3** facing their chosen [point of sail](#term-points-of-sail). The start gun fires immediately on **Round 1**.
-3. **Simultaneous 45-Second Timer**: Use a 45-second timer during the Planning Phase for all players to select their 4 action cards simultaneously.
+1. **Use Course 2 (Beginner Sprint)**: Play **Course 2: Beginner Sprint** (Leg 1 Upwind to the Windward Mark 4 hexes North ➔ Leg 2 Downwind Finish at the Start Line).
+2. **Instant Start**: Skip the 3-turn pre-start countdown sequence. Place all boats in the Pre-Start Area at **Speed 2 or 3** facing their chosen [point of sail](#term-points-of-sail). The start gun fires immediately on **Round 1**!
 
 ---
 
@@ -238,11 +237,27 @@ At the end of each round (after Action 4), all players retrieve their played act
 - **Mark Penalty Limit**: A boat can receive a maximum of 1 Red Flag card per round from any individual mark.
 
 ### Fouling & Right-of-Way (ROW) Rules
-When two boats enter the same hex or path, [Right-of-Way (ROW)](#term-right-of-way) determines which boat is at fault:
-1. **Starboard vs. Port**: A boat on **[Starboard Tack](#term-starboard)** has [ROW](#term-right-of-way) over a boat on **[Port Tack](#term-port)**. The Port tack boat must [keep clear](#term-keep-clear).
-2. **Same Tack (Windward vs. Leeward)**: When on the same tack, the **[Leeward](#term-leeward) boat** (further downwind) has [ROW](#term-right-of-way) over the **[Windward](#term-windward) boat** (further upwind). The Windward boat must [keep clear](#term-keep-clear).
-3. **Overtaking**: A boat coming from behind ([clear astern](#term-clear-ahead)) must [keep clear](#term-keep-clear) of a boat ahead ([clear ahead](#term-clear-ahead)).
-4. **Returning OCS Boat**: A boat returning to the pre-start side after starting early ([OCS](#term-ocs)) has no [Right-of-Way](#term-right-of-way) and must [keep clear](#term-keep-clear) of all boats that started legally.
+
+> [!NOTE]
+> **Tabletop Hex Grid Right-of-Way:** On a hex grid, relative boat positions are defined discretely by hex columns and lines, seamlessly translating World Sailing RRS Part 2 rules into five simple tabletop priorities:
+
+| RRS Rule | Sailing Rule Name | Tabletop Hex Grid Definition | Right-of-Way (ROW) Priority |
+|---|---|---|---|
+| **Rule 10** | **Starboard vs. Port** | Boats are on **different tacks** (one Port, one Starboard). | **Starboard Tack** has ROW over Port Tack. |
+| **Rule 11** | **Same Tack — Overlapped** | Boats are on the same tack, sailing **side-by-side in adjacent hex columns**. | **Leeward boat** (further downwind / South) has ROW over Windward boat. |
+| **Rule 12** | **Same Tack — Not Overlapped** | Boats are on the same tack, sailing **one behind the other in the same hex line**. | **Boat Ahead** has ROW over the Boat Astern (behind). |
+| **Rule 13** | **Tacking** | A boat is executing a **[`Tack`](#term-tack) card**. | **Non-tacking boats** have ROW over a tacking boat. |
+
+#### Detailed Right-of-Way Priorities
+
+1. **Rule 10 (Starboard vs. Port)**: A boat on **[Starboard Tack](#term-starboard)** has [Right-of-Way](#term-right-of-way) over a boat on **[Port Tack](#term-port)**. The Port tack boat must [keep clear](#term-keep-clear).
+2. **Rule 11 (Same Tack — Overlapped / Side-by-Side)**: When on the same tack in adjacent hex columns (side-by-side / overlapped), the **[Leeward](#term-leeward) boat** (further downwind / South) has [Right-of-Way](#term-right-of-way) over the **[Windward](#term-windward) boat** (further upwind / North). The Windward boat must [keep clear](#term-keep-clear).
+3. **Rule 12 (Same Tack — Not Overlapped / Clear Astern)**: When on the same tack in the same hex line (one behind the other), the boat ahead ([clear ahead](#term-clear-ahead)) has [Right-of-Way](#term-right-of-way). The boat coming from behind ([clear astern](#term-clear-ahead)) must [keep clear](#term-keep-clear).
+4. **Rule 13 (Tacking)**: While executing a **[`Tack`](#term-tack)** card, a boat has no [Right-of-Way](#term-right-of-way) and must [keep clear](#term-keep-clear) of all non-tacking boats.
+5. **Returning OCS Boat**: A boat returning to the pre-start side after starting early ([OCS](#term-ocs)) has no [Right-of-Way](#term-right-of-way) and must [keep clear](#term-keep-clear) of all boats that started legally.
+
+> [!IMPORTANT]
+> **Avoiding Contact (RRS Rule 14):** Having Right-of-Way does **not** give a boat permission to deliberately ram another boat. If a ROW boat could easily avoid contact but intentionally sails into a hex occupied by another boat to force a collision penalty, the ramming boat incurs the **Red Flag card** for failing to avoid contact.
 
 ---
 
