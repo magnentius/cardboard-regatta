@@ -33,14 +33,14 @@
 > *"The pessimist complains about the wind; the optimist expects it to change; the realist adjusts the sails."* — William Arthur Ward
 
 ### Components
-- **Hex grid**
-- **Boat tokens** for each player (5 tokens per boat, close-hauled [port](#term-port)/[starboard](#term-starboard) on opposite sides)
-- **Action deck** for each player
-- **Wind Deck** (10 cards for global wind shifts)
-- **Global Wind Direction Marker** (placed at the top of the board)
-- **Speed Trackers** (Player mats with speed sliders or d6 dice to track speed 0–4)
-- **Two d6 dice** (for pre-start turn counter and global wind rolls)
-- **Red Flag cards** (for tracking penalties)
+- **Hex Grid Board** with integrated 6-direction **Compass Rose** (0°, 60°, 120°, 180°, 240°, 300°)
+- **Boat Tokens** for each player (with 6-direction facing indicators and close-hauled [port](#term-port)/[starboard](#term-starboard) sides)
+- **Course Mark Tokens** (Windward Mark, Leeward Mark, Reach Mark / Wing Mark, Committee Boat, Pin Mark)
+- **Action Deck** for each player (containing sequence maneuver cards: `Sail`, `Tack`, `Gybe`, `Bear Off`, `Head Up`, `Luff`)
+- **Global Wind Direction Marker** (placed on the board's Compass Rose)
+- **Speed Die for each player** (a dedicated d6 die placed on the player mat to track boat speed 0–5)
+- **Two 2d6 Dice** (for global wind shift rolls, wind forecasts, and split hex rolls)
+- **Penalty / Red Flag Tokens** (for tracking RRS Appendix A penalties and discards)
 
 ### Points of Sail & Hex Geometry
 Wind direction is set along hex grid axes. The 6 hex directions relative to the wind direction correspond to four [Points of Sail](#term-points-of-sail):
@@ -149,8 +149,8 @@ For quick 4-player games that finish in **15 to 20 minutes max**, use these stre
 
 ### Phase 2: Wind Phase (Optional)
 At the start of each round—**before** players plan their action cards in the Planning Phase:
-1. Draw **1 card** from the Wind Deck (or roll **1d6**; see below) to set the global wind direction for that round.
-2. Adjust the **Global Wind Direction Marker** at the top of the board accordingly.
+1. Roll **2d6** to determine the global wind event for that round (or apply the **Wind Forecast** rolled at the end of the previous round).
+2. Adjust the **Global Wind Direction Marker** on the board's **Compass Rose** accordingly.
 
 #### Global Wind States & Limits
 Global wind can only ever be in one of **three states**:
@@ -159,16 +159,10 @@ Global wind can only ever be in one of **three states**:
 * **Right Shift (60° / +60°)**: Wind blows from 60° (1 hex side clockwise).
 
 > [!IMPORTANT]
-> **Hard Limit:** The wind can **never** shift more than 60° (1 hex side) away from the Base Wind (0°). If a shift is drawn/rolled that would exceed this limit, the wind direction does not change and remains capped at that limit.
+> **Hard Limit:** The wind can **never** shift more than 60° (1 hex side) away from the Base Wind (0°). If a shift is rolled that would exceed this limit, the wind direction does not change and remains capped at that limit.
 
-#### Wind Card Deck Composition (10 Cards)
-* **4x Steady**: Wind direction remains at its current state.
-* **2x Shift Left**: Shift global wind 60° counter-clockwise (max 300°).
-* **2x Shift Right**: Shift global wind 60° clockwise (max 60°).
-* **2x Puff**: Global wind direction remains unchanged, but all boats get **+1 Speed** this round (up to their current Point of Sail's max speed + 1).
-
-#### Alternative: 2d6 Wind Roll Table
-If playing without the Wind Deck, roll **2d6** at the start of each round and consult the following table:
+#### 2d6 Global Wind Shift Table
+Roll **2d6** at the start of each round (or pre-roll for Wind Forecast) and consult the following table:
 
 | 2d6 Roll | Wind Event | Description |
 |---|---|---|
@@ -178,9 +172,9 @@ If playing without the Wind Deck, roll **2d6** at the start of each round and co
 | **10–11** | **Shift Right** | Global wind shifts 60° clockwise (max 60°). |
 | **12** | **Puff + Shift Right** | All boats get **+1 Speed** this round. Global wind shifts 60° clockwise (max 60°). |
 
-#### Wind Forecast (Barometer Mechanic)
+#### Wind Forecast Mechanic
 To reward strategic anticipation and eliminate surprise wind shifts, play with the **Wind Forecast** rule:
-* **Pre-Rolling the Barometer**: At the **end of each round** (Phase 4), roll **2d6** to determine the **Forecasted Wind** for the *next* round.
+* **Pre-Rolling the Wind Shift**: At the **end of each round** (Phase 4), roll **2d6** to determine the **Forecasted Wind** for the *next* round.
 * **Forecast Marker**: Place a Forecast Marker on the Compass Rose indicating the predicted wind direction/event for next turn.
 * **Tactical Planning**: During Phase 3 (Planning Phase), all players see the forecasted wind shift and can program their 4 face-down action cards to take advantage of the coming shift!
 * **Resolving Phase 2**: At the start of Phase 2 (Wind Phase) of the next round, the global wind automatically shifts to the forecasted state, and a new forecast is rolled for the following round.

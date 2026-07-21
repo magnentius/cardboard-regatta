@@ -249,9 +249,9 @@ class SailingAI:
         If is_prestart is True, Expert and Intermediate AI execute a Dip-Start strategy (holding at r=1/r=2 to build speed without crossing OCS).
         """
         # Skill-based Wind Forecast & Planning:
-        # Beginner AI checks barometer forecast 50% of the time.
-        # Intermediate AI checks barometer forecast 75% of the time.
-        # Expert AI checks barometer forecast 100% of the time.
+        # Beginner AI checks Wind Forecast 50% of the time.
+        # Intermediate AI checks Wind Forecast 75% of the time.
+        # Expert AI checks Wind Forecast 100% of the time.
         # Maneuver legality and movement physics must ALWAYS be evaluated against Current Wind (wind)
         eval_wind = wind
 
@@ -762,7 +762,7 @@ class RegattaSimulator:
         # Phase 3: Planning Phase
         if self.wind_forecast and not is_prestart:
             self._roll_next_forecast()
-            self.log(f"🔮 Barometer Forecast for Next Round: {DIR_NAMES[self.forecast_wind]} (2d6 Roll: {self.forecast_roll})")
+            self.log(f"🔮 Wind Vane Forecast for Next Round: {DIR_NAMES[self.forecast_wind]} (2d6 Roll: {self.forecast_roll})")
 
         plans = {}
         for b in self.boats:
@@ -1028,7 +1028,7 @@ def main():
     )
     parser.add_argument(
         "--wind-forecast", action="store_true", default=False,
-        help="Enable Wind Forecast (Barometer mechanic: pre-rolls 2d6 wind state at end of turn for next round planning)"
+        help="Enable Wind Forecast (pre-rolls 2d6 wind state at end of turn for next round planning)"
     )
     parser.add_argument(
         "--log-file", type=str, default="sim_output.log",
