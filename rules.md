@@ -140,10 +140,10 @@ For introductory games or fast tabletop sessions that finish in **10 to 15 minut
 
 ```mermaid
 graph LR
-    A["Phase 1: Wind Phase"] --> B["Phase 2: Planning Phase"]
-    B --> C["Phase 3: Movement Phase"]
-    C --> D["Phase 4: Cleanup & Forecast Phase"]
-    D --> A
+    A["Phase 1: Wind & Forecast"] --> B["Phase 2: Planning"]
+    B --> C["Phase 3: Movement"]
+    C --> D["Phase 4: Cleanup"]
+    D
 ```
 
 ### Pre-Start Sequence (Turns -3, -2, -1)
@@ -159,10 +159,10 @@ graph LR
 
 ### Per-Round Gameplay Loop (4 Phases)
 
-#### Phase 1: Wind Phase
-At the start of each round—**before** players plan their action cards in the Planning Phase:
-1. Apply the **Wind Vane Forecast** rolled at the end of the previous round (or roll **2d6** on the Global Wind Shift Table if playing without forecast).
-2. Adjust the **Global Wind Direction Marker** on the board's **Compass Rose** accordingly.
+#### Phase 1: Wind & Forecast Phase
+At the start of each round—**before** players plan their action cards in Phase 2:
+1. **Apply Current Wind Shift**: Apply the active global wind shift or puff for the round and adjust the **Global Wind Direction Marker** on the board's **Compass Rose**.
+2. **Roll Wind Forecast**: Roll **2d6** on the Global Wind Shift Table to generate the **Wind Forecast** for the *next* round, placing the Forecast Marker on the Compass Rose. All players will see this forecast when planning their cards in Phase 2!
 
 ##### Global Wind States & Limits
 Global wind can only ever be in one of **three states**:
@@ -224,9 +224,8 @@ Movement is executed in 4 **Action Steps** (Action 1 through Action 4):
 3. **Illegal Actions**: If an action is illegal for the current POS or momentum state, it is discarded without effect. If the boat has forward momentum (Momentum 1+), it coasts forward 1 hex without rotating; if Momentum is 0, the boat remains in place.
 4. **Instant Collision & ROW Resolution**: Collision checks and Right-of-Way evaluations occur **instantly during each Action Step**. If a boat enters a hex occupied by another boat (or both enter the same hex during an Action Step), a collision occurs immediately on that step and ROW rules determine who receives a Protest card.
 
-#### Phase 4: Cleanup & Forecast Phase
-1. **Retrieve Cards**: All players retrieve their played action cards back into their hand for the next round (except any cards set aside to clear a Protest).
-2. **Wind Vane Forecast**: Roll **2d6** on the Global Wind Shift Table to determine the **Forecasted Wind** for the *next* round, placing the Forecast Marker on the Compass Rose.
+#### Phase 4: Cleanup Phase
+All players retrieve their played action cards back into their hand for the next round (except any cards set aside to clear a Protest).
 
 ---
 
