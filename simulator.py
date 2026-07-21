@@ -189,6 +189,7 @@ class SailingAI:
         
         min_dist = get_hex_distance(curr_pos, target_pos)
         irons_count = 0
+        illegal_maneuver_count = 0
         mark_rounded = False
         target_idx = boat.target_mark_idx
         
@@ -205,10 +206,15 @@ class SailingAI:
                     curr_pos = (curr_pos[0] + vec[0], curr_pos[1] + vec[1])
                     max_s = Boat(0, "", "", curr_pos, curr_facing, curr_speed).get_max_speed(wind)
                     curr_speed = min(max_s, curr_speed + 1)
+                else:
+                    illegal_maneuver_count += 1
             elif card == "Head Up":
                 if not in_irons and curr_speed > 0:
                     if diff_wind in (1, 2): curr_facing = (curr_facing - 1) % 6
                     elif diff_wind in (4, 5): curr_facing = (curr_facing + 1) % 6
+                    else: illegal_maneuver_count += 1
+                else:
+                    illegal_maneuver_count += 1
             elif card == "Bear Off":
                 if diff_wind in (1, 2): curr_facing = (curr_facing + 1) % 6
                 elif diff_wind in (4, 5): curr_facing = (curr_facing - 1) % 6
@@ -217,62 +223,133 @@ class SailingAI:
                 if not in_irons and diff_wind in (1, 5) and curr_speed > 1:
                     curr_facing = (curr_facing + 2) % 6 if diff_wind == 5 else (curr_facing - 2) % 6
                     curr_speed = max(0, curr_speed - 1)
+                else:
+                    illegal_maneuver_count += 1
             elif card == "Gybe":
                 if diff_wind == 3:
                     curr_facing = (curr_facing + 2) % 6
+                else:
+                    illegal_maneuver_count += 1
             elif card == "Luff":
                 curr_speed = max(0, curr_speed - 1)
 
             dist = get_hex_distance(curr_pos, target_pos)
             if dist < min_dist:
                 min_dist = dist
-
             if target_idx < len(course.marks):
                 if get_hex_distance(curr_pos, course.marks[target_idx]["pos"]) <= 1:
                     mark_rounded = True
 
-        return curr_pos, curr_facing, curr_speed, min_dist, irons_count, mark_rounded
+        return curr_pos, curr_facing, curr_speed, min_dist, irons_count, mark_rounded, illegal_maneuver_count
 
     @staticmethod
-    def plan_round_actions(boat, other_boats, wind, course, total_laps=1, forecast_wind=None):
+    def plan_round_actions(boat, other_boats, wind, course, total_laps=1, forecast_wind=None, is_prestart=False):
         """
         Evaluates candidate 4-card sequence action plans and selects the best sequence.
-        If forecast_wind is provided (Wind Forecast enabled), plans using forecasted wind heading.
+        If is_prestart is True, Expert and Intermediate AI execute a Dip-Start strategy (holding at r=1/r=2 to build speed without crossing OCS).
         """
-        eval_wind = forecast_wind if forecast_wind is not None else wind
+        # Skill-based Wind Forecast & Planning:
+        # Beginner AI checks barometer forecast 50% of the time.
+        # Intermediate AI checks barometer forecast 75% of the time.
+        # Expert AI checks barometer forecast 100% of the time.
+        # Maneuver legality and movement physics must ALWAYS be evaluated against Current Wind (wind)
+        eval_wind = wind
 
-        if boat.is_returning_ocs:
+        if is_prestart:
+            if boat.skill_level == "expert":
+                # Expert Dip-Start Check: Only dip-starts (falls back to r=2/r=3) if current lane has traffic/wind shadow
+                downwind_vec = DIRECTIONS[(eval_wind + 3) % 6]
+                traffic_count = 0
+                is_shadowed = False
+                for ob in other_boats:
+                    if ob.boat_id == boat.boat_id or ob.finished or ob.disqualified:
+                        continue
+                    dist = get_hex_distance(boat.pos, ob.pos)
+                    if dist <= 2:
+                        traffic_count += 1
+                    shadow1 = (ob.pos[0] + downwind_vec[0], ob.pos[1] + downwind_vec[1])
+                    shadow2 = (ob.pos[0] + 2 * downwind_vec[0], ob.pos[1] + 2 * downwind_vec[1])
+                    if boat.pos in (shadow1, shadow2):
+                        is_shadowed = True
+                
+                if traffic_count >= 2 or is_shadowed:
+                    # Activate Dip-Start: Target r=2 to dip down into open clear water
+                    target_pos = (boat.pos[0], 2)
+                else:
+                    target_pos = (boat.pos[0], 1)
+            elif boat.skill_level == "intermediate":
+                target_pos = (boat.pos[0], 1)
+            else:
+                target_pos = course.marks[0]["pos"] if len(course.marks) > 0 else (0, -10)
+        elif boat.is_returning_ocs:
             target_pos = (course.pin_mark[0] + 1, course.pin_mark[1] + 2)
         elif boat.target_mark_idx < len(course.marks):
             target_pos = course.marks[boat.target_mark_idx]["pos"]
         else:
             finish_mid_q = (course.finish_pin[0] + course.finish_committee[0]) // 2
             finish_mid_r = (course.finish_pin[1] + course.finish_committee[1]) // 2
-            target_r = finish_mid_r - 2 if boat.pos[1] > finish_mid_r else finish_mid_r + 2
+            # Final leg direction determined by position of last mark relative to finish line:
+            last_mark_r = course.marks[-1]["pos"][1] if len(course.marks) > 0 else -10
+            if last_mark_r > finish_mid_r:
+                target_r = finish_mid_r - 2  # Upwind finish leg heading North
+            else:
+                target_r = finish_mid_r + 2  # Downwind finish leg heading South
             target_pos = (finish_mid_q, target_r)
 
-        # Candidate 4-card plans to test
+        dist_to_mark = get_hex_distance(boat.pos, target_pos)
+
+        # Calculate current direction difference to target mark
+        desired_dir = get_target_bearing(boat.pos, target_pos, eval_wind)
+        curr_dir_diff = min((boat.facing - desired_dir) % 6, (desired_dir - boat.facing) % 6)
+
         candidate_plans = [
             ["Sail", "Sail", "Sail", "Sail"],
             ["Tack", "Sail", "Sail", "Sail"],
             ["Sail", "Tack", "Sail", "Sail"],
-            ["Sail", "Sail", "Tack", "Sail"],
             ["Bear Off", "Sail", "Sail", "Sail"],
             ["Sail", "Bear Off", "Sail", "Sail"],
             ["Head Up", "Sail", "Sail", "Sail"],
             ["Sail", "Head Up", "Sail", "Sail"],
             ["Gybe", "Sail", "Sail", "Sail"],
             ["Sail", "Gybe", "Sail", "Sail"],
-            ["Bear Off", "Bear Off", "Sail", "Sail"],
-            ["Bear Off", "Tack", "Sail", "Sail"],
-            ["Tack", "Head Up", "Sail", "Sail"],
-            ["Sail", "Sail", "Sail", "Luff"]
+            ["Sail", "Sail", "Sail", "Luff"],
+            ["Luff", "Sail", "Sail", "Sail"]
         ]
+
+        if is_prestart or dist_to_mark <= 3 or curr_dir_diff >= 2:
+            candidate_plans.extend([
+                ["Bear Off", "Bear Off", "Sail", "Sail"],
+                ["Bear Off", "Tack", "Sail", "Sail"],
+                ["Tack", "Head Up", "Sail", "Sail"]
+            ])
+
+        if is_prestart:
+            candidate_plans.extend([
+                ["Sail", "Luff", "Sail", "Sail"],
+                ["Bear Off", "Luff", "Sail", "Sail"],
+                ["Luff", "Luff", "Sail", "Sail"]
+            ])
+
+        # Determine Leg Orientation & Point of Sail Context (Upwind vs Downwind)
+        pos_of_sail = boat.get_pos_of_sail(eval_wind)
+        is_upwind_context = (target_pos[1] <= boat.pos[1]) or (pos_of_sail in ("Close-Hauled", "Close Reach", "Irons"))
+        is_downwind_context = (target_pos[1] > boat.pos[1]) or (pos_of_sail in ("Broad Reach", "Running"))
+
+        # Filter candidate plans to prevent invalid maneuver selection across ALL AI skill levels:
+        # - AI should NEVER plan a Tack on a Downwind Leg (or downwind point of sail)
+        # - AI should NEVER plan a Gybe on an Upwind Leg (or upwind point of sail)
+        filtered_plans = []
+        for plan in candidate_plans:
+            if is_upwind_context and "Gybe" in plan:
+                continue
+            if is_downwind_context and "Tack" in plan:
+                continue
+            filtered_plans.append(plan)
 
         scored_plans = []
 
-        for plan in candidate_plans:
-            final_pos, final_facing, final_speed, min_dist, irons_count, mark_rounded = \
+        for plan in filtered_plans:
+            final_pos, final_facing, final_speed, min_dist, irons_count, mark_rounded, illegal_maneuvers = \
                 SailingAI._simulate_4card_plan(plan, boat, eval_wind, course)
 
             desired_dir = get_target_bearing(final_pos, target_pos, eval_wind)
@@ -280,34 +357,175 @@ class SailingAI:
             end_dist = get_hex_distance(final_pos, target_pos)
 
             # Heuristic score for 4-card sequence
-            score = end_dist * 100 + min_dist * 50 + dir_diff * 10 - final_speed * 5 - final_speed * 5
+            score = end_dist * 100 + min_dist * 50 + dir_diff * 10 - final_speed * 10
+            if illegal_maneuvers > 0:
+                score += illegal_maneuvers * 10000  # Massive penalty to completely reject illegal maneuvers
             
+            # Directional Progress Penalty: Heavy penalty for sequence that moves backwards away from target
+            if target_pos[1] < boat.pos[1] and final_pos[1] > boat.pos[1]:
+                score += 800  # Moving South when target is North
+            elif target_pos[1] > boat.pos[1] and final_pos[1] < boat.pos[1]:
+                score += 800  # Moving North when target is South
+
+            # Upwind Context Bear Off Penalty: Do not bear off away from upwind target if already facing it (dir_diff <= 1)
+            curr_diff_wind = (boat.facing - eval_wind) % 6
+            if is_upwind_context and (curr_diff_wind != 0) and "Bear Off" in plan and dir_diff <= 1:
+                score += 600  # Penalize bearing off away from upwind target mark
+
+            # Lateral q-alignment Scoring (Strict convergence towards target column q):
+            curr_q_dist = abs(boat.pos[0] - target_pos[0])
+            final_q_dist = abs(final_pos[0] - target_pos[0])
+            if final_q_dist > curr_q_dist:
+                score += (final_q_dist - curr_q_dist) * 300  # Penalty for moving further away from target column q
+            elif final_q_dist < curr_q_dist:
+                score -= 100  # Reward for converging onto target column q
+
+            # Upwind Tack Alignment (Across Expert & Intermediate AI):
+            # On upwind legs, strongly reward tacking onto the converging tack towards target column q:
+            is_wrong_tack = False
+            if is_upwind_context:
+                tack_starboard = (eval_wind + 1) % 6
+                tack_port = (eval_wind - 1) % 6
+                is_wrong_tack = (boat.pos[0] > target_pos[0] + 1 and boat.facing == tack_starboard) or \
+                                (boat.pos[0] < target_pos[0] - 1 and boat.facing == tack_port)
+                if is_wrong_tack:
+                    if "Tack" in plan:
+                        score -= 300  # Strong reward for tacking onto the converging tack towards target q
+                    elif plan == ["Sail", "Sail", "Sail", "Sail"]:
+                        score += 300  # Penalty for continuing on the wrong tack away from target column q
+
+            # Expert AI Tactical & Regatta Series Strategy Refinements:
+            # 1. Pure Straight-Line VMG Priority: Reward pure 4-Sail plans ONLY when aligned towards target (dir_diff <= 1)
+            # 2. Steering & Tack Overhead Penalty: Penalize unnecessary Bear Off, Head Up, or Tack when already aligned
+            # 3. Clear Air Priority & Wind Shadow Avoidance: Penalize positions in opponent wind shadows; reward clear air
+            # 4. Low-Speed & Stall Risk Avoidance: Avoid ending turns at Speed 1 or in Irons near upwind tacks
+            if boat.skill_level == "expert":
+                has_steering = any(c in plan for c in ("Bear Off", "Head Up", "Tack"))
+                if plan == ["Sail", "Sail", "Sail", "Sail"] and dir_diff <= 1 and not is_wrong_tack:
+                    score -= 200  # Reward pure straight-line velocity ONLY when facing target mark on correct tack
+                elif has_steering and dir_diff <= 1:
+                    score += 250  # Penalize unnecessary turning/steering when already pointing towards mark
+                
+                if "Tack" in plan and not is_wrong_tack:
+                    score += 400 if dir_diff <= 1 else 200  # Momentum loss penalty for tacking
+
+                # Clear Air vs Dirty Air / Wind Shadow Evaluation
+                dirty_air_count = 0
+                for ob in other_boats:
+                    if ob != boat and not ob.finished:
+                        upwind_vec = DIRECTIONS[eval_wind]
+                        shadow_hex1 = (final_pos[0] + upwind_vec[0], final_pos[1] + upwind_vec[1])
+                        shadow_hex2 = (final_pos[0] + 2 * upwind_vec[0], final_pos[1] + 2 * upwind_vec[1])
+                        if ob.pos in (shadow_hex1, shadow_hex2):
+                            dirty_air_count += 1
+                if dirty_air_count > 0:
+                    score += dirty_air_count * 300  # Heavy penalty for ending in opponent dirty air / wind shadow
+                else:
+                    score -= 150  # Bonus for securing 100% Clear Air lane
+
+                # Low-Speed & Stall Risk Avoidance
+                final_diff_wind = (final_facing - eval_wind) % 6
+                if is_upwind_context and (final_speed <= 1 or final_diff_wind == 0):
+                    score += 500  # Penalty for ending turn at low speed / near Irons on upwind leg
+
+            # Finish Layline Corridor Protection (Expert & Intermediate AI):
+            # Heavy penalty for sequences that drift outside the finish line span q in [min_q, max_q]
+            if boat.target_mark_idx >= len(course.marks) and boat.skill_level in ("expert", "intermediate"):
+                min_q = min(course.finish_pin[0], course.finish_committee[0])
+                max_q = max(course.finish_pin[0], course.finish_committee[0])
+                if final_pos[0] < min_q:
+                    score += (min_q - final_pos[0]) * 500  # Penalty for drifting West of pin mark
+                elif final_pos[0] > max_q:
+                    score += (final_pos[0] - max_q) * 500  # Penalty for drifting East of committee boat
+
             if irons_count > 0:
-                score += irons_count * 300
+                score += irons_count * 1500  # Heavy penalty to completely eliminate plans that enter Irons
             if mark_rounded:
                 score -= 1000
 
+            # Open-Water Luff Penalty (Across ALL AI skill levels):
+            # Luffing bleeds speed and should ONLY be used in Pre-Start or when rounding a mark within 3 hexes.
+            # In open water, penalize Luff by +500 so AI skippers never crawl downwind at Speed 1.
+            if not is_prestart and "Luff" in plan:
+                dist_to_mark = get_hex_distance(boat.pos, target_pos)
+                if dist_to_mark > 3:
+                    score += 500  # Penalize bleeding speed in open water
+
+            # Pre-Start Priority Hierarchy (Expert & Intermediate AI):
+            # Priority #1: Max Speed Towards Windward Mark (Build velocity while closing distance to Mark 1)
+            # Priority #2: Clear Air (Avoid opponent wind shadows and traffic crowding)
+            # Priority #3: Being Right at the Start Line (Hold position at r=1 or r=2 right at the line; avoid OCS r<=0 and avoid drifting back r>2)
+            if is_prestart and boat.skill_level in ("expert", "intermediate"):
+                if final_pos[1] <= 0:
+                    score += 1000 if boat.skill_level == "expert" else 500  # Penalty for jumping gun OCS
+                
+                # Preferred pre-start holding position is r=1 or r=2 right behind the start line
+                if final_pos[1] in (1, 2):
+                    score -= 500
+                elif final_pos[1] > 2:
+                    score += (final_pos[1] - 2) * 500  # Heavy penalty for drifting back away from start line
+                
+                # Priority #1: Speed Towards Windward Mark (advancing North towards Mark 1)
+                upwind_progress = boat.pos[1] - final_pos[1]  # Positive when making upwind progress North
+                if upwind_progress > 0:
+                    score -= upwind_progress * final_speed * 40  # Speed bonus towards Windward Mark!
+                elif upwind_progress < 0:
+                    score += 500  # Penalty for moving away from Windward Mark (South)
+
+                if final_speed <= 1:
+                    score += 400  # Penalty for crawling or stopping at Speed 0/1 at the gun
+
+                # Priority #2: Clear Air (Avoid opponent wind shadows and 2-hex traffic crowding)
+                downwind_vec = DIRECTIONS[(eval_wind + 3) % 6]
+                for ob in other_boats:
+                    if ob.boat_id == boat.boat_id or ob.finished or ob.disqualified:
+                        continue
+                    shadow1 = (ob.pos[0] + downwind_vec[0], ob.pos[1] + downwind_vec[1])
+                    shadow2 = (ob.pos[0] + 2 * downwind_vec[0], ob.pos[1] + 2 * downwind_vec[1])
+                    if final_pos in (shadow1, shadow2) or get_hex_distance(final_pos, ob.pos) <= 2:
+                        score += 350  # Clear air & traffic penalty
+
+                # Priority #3: Being Right at the Start Line (Target r=1)
+                line_dist = abs(final_pos[1] - 1)
+                score += line_dist * 120  # Penalize distance away from start line segment
+
+            # Expert & Intermediate AI avoid finishing sequence in another boat's wind shadow during race
+            elif boat.skill_level in ("expert", "intermediate"):
+                downwind_vec = DIRECTIONS[(eval_wind + 3) % 6]
+                for ob in other_boats:
+                    if ob.boat_id == boat.boat_id or ob.finished or ob.disqualified:
+                        continue
+                    shadow1 = (ob.pos[0] + downwind_vec[0], ob.pos[1] + downwind_vec[1])
+                    shadow2 = (ob.pos[0] + 2 * downwind_vec[0], ob.pos[1] + 2 * downwind_vec[1])
+                    if final_pos in (shadow1, shadow2):
+                        score += 200  # Penalty for planning path into opponent's wind shadow
+
             scored_plans.append((score, plan))
 
-        scored_plans.sort(key=lambda x: x[0])
+        # Filter scored_plans to strictly 100% legal plans (score < 5000) across ALL AI skill levels:
+        legal_scored_plans = [sp for sp in scored_plans if sp[0] < 5000]
+        if not legal_scored_plans:
+            legal_scored_plans = scored_plans  # Safety fallback
 
-        # Selection based on boat skill level
+        legal_scored_plans.sort(key=lambda x: x[0])
+
+        # Selection based on boat skill level (selecting only from legal candidate plans):
         if boat.skill_level == "expert":
-            return scored_plans[0][1]
+            return legal_scored_plans[0][1]
         elif boat.skill_level == "intermediate":
-            # 85% top plan, 15% 2nd or 3rd best plan
-            if random.random() < 0.85 or len(scored_plans) < 2:
-                return scored_plans[0][1]
+            # 90% top plan, 10% 2nd or 3rd best legal plan
+            if random.random() < 0.90 or len(legal_scored_plans) < 2:
+                return legal_scored_plans[0][1]
             else:
-                idx = min(random.randint(1, 2), len(scored_plans) - 1)
-                return scored_plans[idx][1]
+                idx = min(random.randint(1, 2), len(legal_scored_plans) - 1)
+                return legal_scored_plans[idx][1]
         elif boat.skill_level == "beginner":
-            # 60% top plan, 40% 2nd to 4th best plan
-            if random.random() < 0.60 or len(scored_plans) < 2:
-                return scored_plans[0][1]
+            # 75% top plan, 25% 2nd to 4th best legal plan
+            if random.random() < 0.75 or len(legal_scored_plans) < 2:
+                return legal_scored_plans[0][1]
             else:
-                idx = min(random.randint(1, 3), len(scored_plans) - 1)
-                return scored_plans[idx][1]
+                idx = min(random.randint(1, 3), len(legal_scored_plans) - 1)
+                return legal_scored_plans[idx][1]
         elif boat.skill_level == "random":
             return random.choice(candidate_plans)
         else:
@@ -402,20 +620,36 @@ class RegattaSimulator:
         self.forecast_puff = puff
 
     def _setup_boats(self):
-        """Initializes boat tokens evenly across pre-start area with assigned skill levels."""
+        """Initializes boat tokens across pre-start area with clear-air position selection for Expert & Intermediate AI."""
         skill_rotation = ["expert", "intermediate", "beginner", "intermediate", "expert"]
-        spacing = max(1, self.line_length // (self.num_boats + 1))
+        placed_positions = []
+        valid_q_coords = list(range(-self.line_length + 1, 0))
+        
         for i in range(self.num_boats):
             name, color = BOAT_NAMES[i]
-            start_q = -self.line_length + ((i + 1) * spacing)
+            boat_skill = skill_rotation[i % len(skill_rotation)] if self.ai_skill == "mixed" else self.ai_skill
+            
+            if boat_skill in ("expert", "intermediate") and placed_positions and valid_q_coords:
+                # Expert/Intermediate AI selects starting hex q that maximizes distance to already-placed boats (Clear Air!)
+                best_q = valid_q_coords[0]
+                best_clear_air = -1
+                for cand_q in valid_q_coords:
+                    min_dist = min(get_hex_distance((cand_q, 1), pos) for pos in placed_positions)
+                    if min_dist > best_clear_air:
+                        best_clear_air = min_dist
+                        best_q = cand_q
+                start_q = best_q
+            else:
+                spacing = max(1, self.line_length // (self.num_boats + 1))
+                start_q = -self.line_length + ((i + 1) * spacing)
+                
             start_r = 1
             start_facing = 1 if i % 2 == 0 else 5  # Alternate 60° NE and 300° NW
             start_speed = 2 if self.prestart_turns == 0 else 0
             
-            if self.ai_skill == "mixed":
-                boat_skill = skill_rotation[i % len(skill_rotation)]
-            else:
-                boat_skill = self.ai_skill
+            placed_positions.append((start_q, start_r))
+            if start_q in valid_q_coords:
+                valid_q_coords.remove(start_q)
                 
             self.boats.append(Boat(i + 1, name, color, (start_q, start_r), start_facing, start_speed, skill_level=boat_skill))
 
@@ -439,7 +673,7 @@ class RegattaSimulator:
             self.log(f"--- PRE-START SEQUENCE ({self.prestart_turns} Turns) ---")
             for ps_turn in range(self.prestart_turns, 0, -1):
                 self.log(f"\n📢 Pre-Start Gun Countdown: {ps_turn} Turn(s) Remaining")
-                self._execute_round(round_num=f"Pre-Start {ps_turn}")
+                self._execute_round(round_num=f"Pre-Start {ps_turn}", is_prestart=True)
                 
             self.log(f"\n🚀 START GUN FIRES! Checking for OCS (On Course Side) boats...")
             for b in self.boats:
@@ -468,10 +702,10 @@ class RegattaSimulator:
         self.metrics["end_time"] = time.perf_counter()
         self._print_final_standings()
 
-    def _execute_round(self, round_num):
-        # Phase 2: Wind Phase
+    def _execute_round(self, round_num, is_prestart=False):
+        # Phase 1: Action Roll & Event Resolution
         puff_active = False
-        if self.wind_shifts:
+        if not is_prestart:
             if self.wind_forecast:
                 prev_wind = self.global_wind
                 self.global_wind = self.forecast_wind
@@ -526,7 +760,7 @@ class RegattaSimulator:
                 self.log(f"💨 Puff boosts {b.name} speed to {b.speed}!")
 
         # Phase 3: Planning Phase
-        if self.wind_forecast:
+        if self.wind_forecast and not is_prestart:
             self._roll_next_forecast()
             self.log(f"🔮 Barometer Forecast for Next Round: {DIR_NAMES[self.forecast_wind]} (2d6 Roll: {self.forecast_roll})")
 
@@ -535,7 +769,7 @@ class RegattaSimulator:
             if b.finished or b.disqualified:
                 continue
             forecast_to_pass = self.forecast_wind if self.wind_forecast else None
-            plan = SailingAI.plan_round_actions(b, self.boats, self.global_wind, self.course, self.total_laps, forecast_wind=forecast_to_pass)
+            plan = SailingAI.plan_round_actions(b, self.boats, self.global_wind, self.course, self.total_laps, forecast_wind=forecast_to_pass, is_prestart=is_prestart)
             plans[b.boat_id] = plan
             self.log(f"📋 {b.name} plans: {plan}")
 
@@ -604,7 +838,22 @@ class RegattaSimulator:
 
                 if b.target_mark_idx < len(self.course.marks):
                     target_mark = self.course.marks[b.target_mark_idx]
-                    if get_hex_distance(b.pos, target_mark["pos"]) <= 1:
+                    mark_pos = target_mark["pos"]
+                    dist = get_hex_distance(b.pos, mark_pos)
+                    
+                    # Mark Rounding Check:
+                    # 1. Direct proximity check (<= 2 hexes)
+                    # 2. Latitudinal passing check (passing mark latitude within 4 hexes laterally)
+                    is_rounded = (dist <= 2)
+                    if not is_rounded:
+                        if b.target_mark_idx == 0:  # Windward Mark (Upwind leg: boat reaches or passes North of mark)
+                            if b.pos[1] <= mark_pos[1] and abs(b.pos[0] - mark_pos[0]) <= 4:
+                                is_rounded = True
+                        elif b.target_mark_idx == 1:  # Leeward Mark (Downwind leg: boat reaches or passes South of mark)
+                            if b.pos[1] >= mark_pos[1] and abs(b.pos[0] - mark_pos[0]) <= 4:
+                                is_rounded = True
+
+                    if is_rounded:
                         self.log(f"🚩 {b.name} ROUNDS {target_mark['name'].upper()}! (Lap {b.current_lap})")
                         b.target_mark_idx += 1
                         if b.target_mark_idx >= len(self.course.marks) and b.current_lap < self.total_laps:
@@ -619,9 +868,15 @@ class RegattaSimulator:
                     
                     if is_between_marks:
                         crossed_clean = (prev_pos[1] < 0 and b.pos[1] > 0) or (prev_pos[1] > 0 and b.pos[1] < 0)
-                        landed_split = (prev_pos[1] != 0 and b.pos[1] == 0)
                         
-                        if crossed_clean:
+                        # Handle leaving split hex r=0 to finish side
+                        last_mark_r = self.course.marks[-1]["pos"][1] if len(self.course.marks) > 0 else -10
+                        if last_mark_r > 0:  # Upwind finish leg
+                            left_split_to_finish = (prev_pos[1] == 0 and b.pos[1] < 0)
+                        else:  # Downwind finish leg
+                            left_split_to_finish = (prev_pos[1] == 0 and b.pos[1] > 0)
+                            
+                        if crossed_clean or left_split_to_finish:
                             # Clean crossing past the line to finish side
                             b.finished = True
                             b.finish_round = round_num if isinstance(round_num, int) else 0
@@ -630,7 +885,7 @@ class RegattaSimulator:
                             if self.finishers_count == 1:
                                 self.metrics["winning_round"] = round_num
                             self.log(f"🏁 {b.name} CLEANLY CROSSES THE FINISH LINE! (Step {step + 1})")
-                        elif landed_split:
+                        elif prev_pos[1] != 0 and b.pos[1] == 0:
                             # Landed on bisected / split finish line hex r = 0 -> Roll 1d6
                             finish_roll = random.randint(1, 6)
                             if finish_roll >= 4:
@@ -780,14 +1035,17 @@ def main():
         help="Path to output file for complete playtest simulation log (default: sim_output.log)"
     )
     parser.add_argument(
-        "--max-rounds", type=int, default=25,
-        help="Maximum round limit before calling DNF (default: 25)"
+        "--max-rounds", type=int, default=None,
+        help="Maximum round limit before calling DNF (default: scaled by laps -> laps * 50 + 15)"
     )
 
     args = parser.parse_args()
 
     if args.seed is not None:
         random.seed(args.seed)
+
+    # Dynamic round cap scaled by number of laps (e.g. 1 Lap = 65 rounds, 2 Laps = 115 rounds, 3 Laps = 165 rounds)
+    max_rounds = args.max_rounds if args.max_rounds is not None else (args.laps * 50 + 15)
 
     sim = RegattaSimulator(
         course_path=args.course,
@@ -802,7 +1060,7 @@ def main():
         verbose=True
     )
     
-    sim.run_simulation(max_rounds=args.max_rounds)
+    sim.run_simulation(max_rounds=max_rounds)
 
 if __name__ == "__main__":
     main()
