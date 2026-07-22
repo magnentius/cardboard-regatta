@@ -1,8 +1,8 @@
 {
-  "name": "Course 1: Standard Windward-Leeward (3 Legs)",
+  "name": "Course 2: Standard Windward-Leeward (3 Legs)",
   "board_bounds": {
-    "q_min": -15, "q_max": 15,
-    "r_min": -20, "r_max": 15
+    "q_min": -30, "q_max": 30,
+    "r_min": -30, "r_max": 30
   },
   "start_line": {
     "committee_boat": [0, 0],

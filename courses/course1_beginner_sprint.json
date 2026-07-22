@@ -1,5 +1,5 @@
 {
-  "name": "Course 2: Beginner Sprint (2 Legs)",
+  "name": "Course 1: Beginner Sprint (2 Legs)",
   "board_bounds": {
     "q_min": -10, "q_max": 10,
     "r_min": -12, "r_max": 10
@@ -12,7 +12,7 @@
     {
       "id": "windward_mark",
       "name": "Windward Mark",
-      "pos": [-2, -4],
+      "pos": [-2, -5],
       "rounding_direction": "Port"
     }
   ],

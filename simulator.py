@@ -7,7 +7,7 @@ courses, wind shift dynamics, multi-boat right-of-way, multi-lap sailing,
 and game metrics (rounds played, estimated tabletop play time, maneuver stats).
 
 Usage Example:
-  python3 simulator.py --boats 4 --wind-shifts --course courses/course2_beginner_sprint.json --laps 1 --est-turn-time 90
+  python3 simulator.py --boats 4 --wind-shifts --course courses/course1_beginner_sprint.json --laps 1 --est-turn-time 90
 """
 
 import argparse
@@ -141,6 +141,7 @@ class Boat:
         self.protests = 0
         self.red_flags = 0  # Backward compatibility alias
         self.finish_rank = 0
+        self.active_protest = False
         self.history = [start_pos]
 
     @property
@@ -212,22 +213,42 @@ class SailingAI:
             if in_irons:
                 irons_count += 1
 
-            if card == "Sail":
+            if card == "Trim":
                 if not in_irons:
                     vec = DIRECTIONS[curr_facing]
-                    curr_pos = (curr_pos[0] + vec[0], curr_pos[1] + vec[1])
-                    max_s = Boat(0, "", "", curr_pos, curr_facing, curr_speed).get_max_speed(wind)
-                    curr_speed = min(max_s, curr_speed + 1)
+                    next_pos = (curr_pos[0] + vec[0], curr_pos[1] + vec[1])
+                    if course.bounds["q_min"] <= next_pos[0] <= course.bounds["q_max"] and course.bounds["r_min"] <= next_pos[1] <= course.bounds["r_max"]:
+                        curr_pos = next_pos
+                        max_s = Boat(0, "", "", curr_pos, curr_facing, curr_speed).get_max_speed(wind)
+                        curr_speed = min(max_s, curr_speed + 1)
+                    else:
+                        illegal_maneuver_count += 1
+                        curr_speed = 0
                 else:
                     illegal_maneuver_count += 1
             elif card == "Head Up":
                 if not in_irons and curr_speed > 0:
-                    if diff_wind in (1, 2): curr_facing = (curr_facing - 1) % 6
-                    elif diff_wind in (4, 5): curr_facing = (curr_facing + 1) % 6
-                    else: illegal_maneuver_count += 1
+                    vec = DIRECTIONS[curr_facing]
+                    next_pos = (curr_pos[0] + vec[0], curr_pos[1] + vec[1])
+                    if course.bounds["q_min"] <= next_pos[0] <= course.bounds["q_max"] and course.bounds["r_min"] <= next_pos[1] <= course.bounds["r_max"]:
+                        curr_pos = next_pos
+                        if diff_wind in (1, 2): curr_facing = (curr_facing - 1) % 6
+                        elif diff_wind in (4, 5): curr_facing = (curr_facing + 1) % 6
+                        else: illegal_maneuver_count += 1
+                    else:
+                        illegal_maneuver_count += 1
+                        curr_speed = 0
                 else:
                     illegal_maneuver_count += 1
             elif card == "Bear Off":
+                if curr_speed >= 1:
+                    vec = DIRECTIONS[curr_facing]
+                    next_pos = (curr_pos[0] + vec[0], curr_pos[1] + vec[1])
+                    if course.bounds["q_min"] <= next_pos[0] <= course.bounds["q_max"] and course.bounds["r_min"] <= next_pos[1] <= course.bounds["r_max"]:
+                        curr_pos = next_pos
+                    else:
+                        illegal_maneuver_count += 1
+                        curr_speed = 0
                 if diff_wind in (1, 2): curr_facing = (curr_facing + 1) % 6
                 elif diff_wind in (4, 5): curr_facing = (curr_facing - 1) % 6
                 elif diff_wind == 0: curr_facing = (curr_facing + 1) % 6
@@ -268,28 +289,7 @@ class SailingAI:
         eval_wind = wind
 
         if is_prestart:
-            if boat.skill_level == "expert":
-                # Expert Dip-Start Check: Only dip-starts (falls back to r=2/r=3) if current lane has traffic/wind shadow
-                downwind_vec = DIRECTIONS[(eval_wind + 3) % 6]
-                traffic_count = 0
-                is_shadowed = False
-                for ob in other_boats:
-                    if ob.boat_id == boat.boat_id or ob.finished or ob.disqualified:
-                        continue
-                    dist = get_hex_distance(boat.pos, ob.pos)
-                    if dist <= 2:
-                        traffic_count += 1
-                    shadow1 = (ob.pos[0] + downwind_vec[0], ob.pos[1] + downwind_vec[1])
-                    shadow2 = (ob.pos[0] + 2 * downwind_vec[0], ob.pos[1] + 2 * downwind_vec[1])
-                    if boat.pos in (shadow1, shadow2):
-                        is_shadowed = True
-                
-                if traffic_count >= 2 or is_shadowed:
-                    # Activate Dip-Start: Target r=2 to dip down into open clear water
-                    target_pos = (boat.pos[0], 2)
-                else:
-                    target_pos = (boat.pos[0], 1)
-            elif boat.skill_level == "intermediate":
+            if boat.skill_level in ("expert", "intermediate"):
                 target_pos = (boat.pos[0], 1)
             else:
                 target_pos = course.marks[0]["pos"] if len(course.marks) > 0 else (0, -10)
@@ -315,31 +315,31 @@ class SailingAI:
         curr_dir_diff = min((boat.facing - desired_dir) % 6, (desired_dir - boat.facing) % 6)
 
         candidate_plans = [
-            ["Sail", "Sail", "Sail", "Sail"],
-            ["Tack", "Sail", "Sail", "Sail"],
-            ["Sail", "Tack", "Sail", "Sail"],
-            ["Bear Off", "Sail", "Sail", "Sail"],
-            ["Sail", "Bear Off", "Sail", "Sail"],
-            ["Head Up", "Sail", "Sail", "Sail"],
-            ["Sail", "Head Up", "Sail", "Sail"],
-            ["Gybe", "Sail", "Sail", "Sail"],
-            ["Sail", "Gybe", "Sail", "Sail"],
-            ["Sail", "Sail", "Sail", "Luff"],
-            ["Luff", "Sail", "Sail", "Sail"]
+            ["Trim", "Trim", "Trim", "Trim"],
+            ["Tack", "Trim", "Trim", "Trim"],
+            ["Trim", "Tack", "Trim", "Trim"],
+            ["Bear Off", "Trim", "Trim", "Trim"],
+            ["Trim", "Bear Off", "Trim", "Trim"],
+            ["Head Up", "Trim", "Trim", "Trim"],
+            ["Trim", "Head Up", "Trim", "Trim"],
+            ["Gybe", "Trim", "Trim", "Trim"],
+            ["Trim", "Gybe", "Trim", "Trim"],
+            ["Trim", "Trim", "Trim", "Luff"],
+            ["Luff", "Trim", "Trim", "Trim"]
         ]
 
         if is_prestart or dist_to_mark <= 3 or curr_dir_diff >= 2:
             candidate_plans.extend([
-                ["Bear Off", "Bear Off", "Sail", "Sail"],
-                ["Bear Off", "Tack", "Sail", "Sail"],
-                ["Tack", "Head Up", "Sail", "Sail"]
+                ["Bear Off", "Bear Off", "Trim", "Trim"],
+                ["Bear Off", "Tack", "Trim", "Trim"],
+                ["Tack", "Head Up", "Trim", "Trim"]
             ])
 
         if is_prestart:
             candidate_plans.extend([
-                ["Sail", "Luff", "Sail", "Sail"],
-                ["Bear Off", "Luff", "Sail", "Sail"],
-                ["Luff", "Luff", "Sail", "Sail"]
+                ["Trim", "Luff", "Trim", "Trim"],
+                ["Bear Off", "Luff", "Trim", "Trim"],
+                ["Luff", "Luff", "Trim", "Trim"]
             ])
 
         # Determine Leg Orientation & Point of Sail Context (Upwind vs Downwind)
@@ -403,17 +403,17 @@ class SailingAI:
                 if is_wrong_tack:
                     if "Tack" in plan:
                         score -= 300  # Strong reward for tacking onto the converging tack towards target q
-                    elif plan == ["Sail", "Sail", "Sail", "Sail"]:
+                    elif plan == ["Trim", "Trim", "Trim", "Trim"]:
                         score += 300  # Penalty for continuing on the wrong tack away from target column q
 
             # Expert AI Tactical & Regatta Series Strategy Refinements:
-            # 1. Pure Straight-Line VMG Priority: Reward pure 4-Sail plans ONLY when aligned towards target (dir_diff <= 1)
+            # 1. Pure Straight-Line VMG Priority: Reward pure 4-Trim plans ONLY when aligned towards target (dir_diff <= 1)
             # 2. Steering & Tack Overhead Penalty: Penalize unnecessary Bear Off, Head Up, or Tack when already aligned
             # 3. Clear Air Priority & Wind Shadow Avoidance: Penalize positions in opponent wind shadows; reward clear air
             # 4. Low-Speed & Stall Risk Avoidance: Avoid ending turns at Speed 1 or in Irons near upwind tacks
             if boat.skill_level == "expert":
                 has_steering = any(c in plan for c in ("Bear Off", "Head Up", "Tack"))
-                if plan == ["Sail", "Sail", "Sail", "Sail"] and dir_diff <= 1 and not is_wrong_tack:
+                if plan == ["Trim", "Trim", "Trim", "Trim"] and dir_diff <= 1 and not is_wrong_tack:
                     score -= 200  # Reward pure straight-line velocity ONLY when facing target mark on correct tack
                 elif has_steering and dir_diff <= 1:
                     score += 250  # Penalize unnecessary turning/steering when already pointing towards mark
@@ -501,6 +501,15 @@ class SailingAI:
                 line_dist = abs(final_pos[1] - 1)
                 score += line_dist * 120  # Penalize distance away from start line segment
 
+                # AI Collision Avoidance: Stay away from other boats during pre-start
+                if boat.skill_level in ("expert", "intermediate"):
+                    for ob in other_boats:
+                        if ob.boat_id == boat.boat_id or ob.finished or ob.disqualified:
+                            continue
+                        if get_hex_distance(final_pos, ob.pos) <= 1:
+                            penalty = 300 if boat.skill_level == "expert" else 150
+                            score += penalty  # Penalty for ending too close to another boat (pile-up avoidance)
+
             # Expert & Intermediate AI avoid finishing sequence in another boat's wind shadow during race
             elif boat.skill_level in ("expert", "intermediate"):
                 downwind_vec = DIRECTIONS[(eval_wind + 3) % 6]
@@ -562,15 +571,20 @@ class RegattaSimulator:
         # Dynamic Start Line Length: num_boats + 1d6 roll
         self.d6_line_roll = random.randint(1, 6)
         self.line_length = self.num_boats + self.d6_line_roll
+        
+        # Calculate q shift to maintain course shape relative to center
+        original_mid_q = (self.course.pin_mark[0] + self.course.committee_boat[0]) // 2
+        new_mid_q = -self.line_length // 2
+        q_shift = new_mid_q - original_mid_q
+        
         self.course.pin_mark = (-self.line_length, 0)
         self.course.committee_boat = (0, 0)
         self.course.finish_pin = (-self.line_length, 0)
         self.course.finish_committee = (0, 0)
         
         # Re-align buoy marks with center of dynamic start line
-        mid_q = -self.line_length // 2
         for m in self.course.marks:
-            m["pos"] = (mid_q, m["pos"][1])
+            m["pos"] = (m["pos"][0] + q_shift, m["pos"][1])
         
         self.log_handle = open(log_file, "w", encoding="utf-8") if log_file else None
         
@@ -783,6 +797,12 @@ class RegattaSimulator:
                 continue
             forecast_to_pass = self.forecast_wind if self.wind_forecast else None
             plan = SailingAI.plan_round_actions(b, self.boats, self.global_wind, self.course, self.total_laps, forecast_wind=forecast_to_pass, is_prestart=is_prestart)
+            
+            if getattr(b, "active_protest", False):
+                plan = plan[:2] + ["Pass", "Pass"]
+                b.active_protest = False
+                self.log(f"📉 {b.name} serves Protest penalty (discards 2 cards).")
+                
             plans[b.boat_id] = plan
             self.log(f"📋 {b.name} plans: {plan}")
 
@@ -791,7 +811,7 @@ class RegattaSimulator:
             self.log(f"\n --- Action Step {step + 1} ---")
             
             active_boats = [b for b in self.boats if not b.finished and not b.disqualified]
-            active_boats.sort(key=lambda x: (x.pos[1], -x.speed, x.boat_id))
+            active_boats.sort(key=lambda x: (x.pos[1], -x.speed, random.random()))
             
             for b in active_boats:
                 card = plans[b.boat_id][step]
@@ -799,34 +819,51 @@ class RegattaSimulator:
                 prev_pos = b.pos
                 prev_facing = b.facing
                 
-                if card == "Sail":
+                if card == "Trim":
                     if b.get_pos_of_sail(self.global_wind) == "Irons":
-                        self.log(f"❌ {b.name} cannot Sail in Irons! Action discarded.")
+                        self.log(f"❌ {b.name} cannot Trim in Irons! Action discarded.")
                     else:
                         vec = DIRECTIONS[b.facing]
-                        b.pos = (b.pos[0] + vec[0], b.pos[1] + vec[1])
-                        b.speed = min(b.get_max_speed(self.global_wind), b.speed + 1)
-                        b.history.append(b.pos)
-                        self.metrics["total_hexes_sailed"] += 1
-                        self.log(f"⛵ {b.name} plays Sail. Moves to {b.pos}. Speed: {b.speed}.")
+                        next_pos = (b.pos[0] + vec[0], b.pos[1] + vec[1])
+                        if self.course.bounds["q_min"] <= next_pos[0] <= self.course.bounds["q_max"] and self.course.bounds["r_min"] <= next_pos[1] <= self.course.bounds["r_max"]:
+                            b.pos = next_pos
+                            b.speed = min(b.get_max_speed(self.global_wind), b.speed + 1)
+                            b.history.append(b.pos)
+                            self.metrics["total_hexes_sailed"] += 1
+                            self.log(f"⛵ {b.name} plays Trim. Moves to {b.pos}. Speed: {b.speed}.")
+                        else:
+                            b.speed = 0
+                            self.log(f"💥 {b.name} hits board boundary playing Trim! Speed drops to 0.")
                 elif card == "Head Up":
                     if b.speed == 0 or b.get_pos_of_sail(self.global_wind) == "Irons":
                         self.log(f"❌ {b.name} cannot Head Up (Speed 0 or Irons)! Action discarded.")
                     else:
                         vec = DIRECTIONS[b.facing]
-                        b.pos = (b.pos[0] + vec[0], b.pos[1] + vec[1])
-                        b.history.append(b.pos)
-                        self.metrics["total_hexes_sailed"] += 1
-                        diff = (b.facing - self.global_wind) % 6
-                        if diff in (1, 2): b.facing = (b.facing - 1) % 6
-                        elif diff in (4, 5): b.facing = (b.facing + 1) % 6
-                        self.log(f"🔄 {b.name} plays Head Up. Moves to {b.pos}. Heading: {DIR_NAMES[b.facing]}.")
+                        next_pos = (b.pos[0] + vec[0], b.pos[1] + vec[1])
+                        if self.course.bounds["q_min"] <= next_pos[0] <= self.course.bounds["q_max"] and self.course.bounds["r_min"] <= next_pos[1] <= self.course.bounds["r_max"]:
+                            b.pos = next_pos
+                            b.history.append(b.pos)
+                            self.metrics["total_hexes_sailed"] += 1
+                            diff = (b.facing - self.global_wind) % 6
+                            if diff in (1, 2): b.facing = (b.facing - 1) % 6
+                            elif diff in (4, 5): b.facing = (b.facing + 1) % 6
+                            self.log(f"🔄 {b.name} plays Head Up. Moves to {b.pos}. Heading: {DIR_NAMES[b.facing]}.")
+                        else:
+                            b.speed = 0
+                            self.log(f"💥 {b.name} hits board boundary playing Head Up! Speed drops to 0.")
                 elif card == "Bear Off":
+                    hit_boundary = False
                     if b.speed >= 1:
                         vec = DIRECTIONS[b.facing]
-                        b.pos = (b.pos[0] + vec[0], b.pos[1] + vec[1])
-                        b.history.append(b.pos)
-                        self.metrics["total_hexes_sailed"] += 1
+                        next_pos = (b.pos[0] + vec[0], b.pos[1] + vec[1])
+                        if self.course.bounds["q_min"] <= next_pos[0] <= self.course.bounds["q_max"] and self.course.bounds["r_min"] <= next_pos[1] <= self.course.bounds["r_max"]:
+                            b.pos = next_pos
+                            b.history.append(b.pos)
+                            self.metrics["total_hexes_sailed"] += 1
+                        else:
+                            b.speed = 0
+                            hit_boundary = True
+                            self.log(f"💥 {b.name} hits board boundary playing Bear Off! Speed drops to 0.")
                     diff = (b.facing - self.global_wind) % 6
                     if diff in (1, 2): b.facing = (b.facing + 1) % 6
                     elif diff in (4, 5): b.facing = (b.facing - 1) % 6
@@ -1069,8 +1106,8 @@ def main():
         description="Cardboard Regatta - Python Playtest Simulator Engine"
     )
     parser.add_argument(
-        "--boats", type=int, default=3,
-        help="Number of boats in the regatta (1 to 8, default: 3)"
+        "--boats", type=int, default=4,
+        help="Number of boats in the regatta (1 to 8, default: 4)"
     )
     parser.add_argument(
         "--wind-shifts", action="store_true", default=True,
@@ -1081,20 +1118,20 @@ def main():
         help="Disable wind shifts for steady wind test"
     )
     parser.add_argument(
-        "--course", type=str, default="courses/course2_beginner_sprint.json",
-        help="Path to course JSON configuration file (default: courses/course2_beginner_sprint.json)"
+        "--course", type=str, default="courses/course2_windward_leeward.json",
+        help="Path to course JSON configuration file (default: courses/course2_windward_leeward.json)"
     )
     parser.add_argument(
         "--laps", type=int, default=1,
         help="Number of laps for the race (default: 1)"
     )
     parser.add_argument(
-        "--prestart-turns", type=int, default=0,
-        help="Number of pre-start countdown turns (0 for Instant Start, default: 0)"
+        "--prestart-turns", type=int, default=3,
+        help="Number of pre-start countdown turns (0 for Instant Start, default: 3)"
     )
     parser.add_argument(
-        "--ai-skill", type=str, choices=["expert", "intermediate", "beginner", "mixed", "random"], default="expert",
-        help="AI skill profile: expert, intermediate, beginner, mixed, or random (default: expert)"
+        "--ai-skill", type=str, choices=["expert", "intermediate", "beginner", "mixed", "random"], default="mixed",
+        help="AI skill profile: expert, intermediate, beginner, mixed, or random (default: mixed)"
     )
     parser.add_argument(
         "--est-turn-time", type=int, default=90,
@@ -1105,8 +1142,12 @@ def main():
         help="Random seed for reproducible playtest runs"
     )
     parser.add_argument(
-        "--wind-forecast", action="store_true", default=False,
+        "--wind-forecast", action="store_true", default=True,
         help="Enable Wind Forecast (pre-rolls 2d6 wind state at end of turn for next round planning)"
+    )
+    parser.add_argument(
+        "--no-wind-forecast", action="store_false", dest="wind_forecast",
+        help="Disable Wind Forecast"
     )
     parser.add_argument(
         "--log-file", type=str, default="sim_output.log",

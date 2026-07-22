@@ -25,7 +25,7 @@
   - [No Disqualification (Never DSQ) & Leaving the Board](#no-disqualification-never-dsq--leaving-the-board)
 - [Finishing the Race](#finishing-the-race)
 - [Scoring System (RRS Appendix A)](#scoring-system-rrs-appendix-a)
-- [Glossary of Nautical & Racing Terms](#glossary-of-nautical--racing-terms)
+- [Definitions](#definitions)
 
 ---
 
@@ -36,7 +36,7 @@
 - **Hex Grid Board** with integrated 6-direction **Compass Rose** (0°, 60°, 120°, 180°, 240°, 300°)
 - **Boat Tokens**: 3 double-sided tokens per boat indicating [Point of Sail](#term-points-of-sail) and Tack: Token 1 (Close-Hauled), Token 2 (Broad Reach), and Token 3 (Run). Side A shows [Port Tack](#term-port) (outlined in **Red**), and Side B shows [Starboard Tack](#term-starboard) (outlined in **Green**).
 - **Course Mark Tokens** (Windward Mark, Leeward Mark, Reach Mark / Wing Mark, Committee Boat, Pin Mark)
-- **Action Deck** for each player (containing sequence maneuver cards: `Sail`, `Tack`, `Gybe`, `Bear Off`, `Head Up`, `Luff`)
+- **Action Deck** for each player (containing sequence maneuver cards: [`Trim`](#term-trim), [`Tack`](#term-tack), [`Gybe`](#term-gybe), [`Bear Off`](#term-bear-off), [`Head Up`](#term-head-up), [`Luff`](#term-luff))
 - **Global Wind Direction Marker** (placed on the board's Compass Rose)
 - **Momentum Die for each player** (a dedicated d6 die placed on the player mat to track boat momentum 0–6)
 - **Two 2d6 Dice** (for global wind shift rolls, wind forecasts, and split hex rolls)
@@ -58,7 +58,7 @@ Wind direction is set along hex grid axes. The 6 hex directions relative to the 
 - **Token Swapping & Flipping**: Each boat has 3 double-sided tokens corresponding to the three sailing [Points of Sail](#term-points-of-sail) (Close-Hauled, Broad Reach, and Run). Side A shows [Port Tack](#term-port) (outlined in **Red**), and Side B shows [Starboard Tack](#term-starboard) (outlined in **Green**). Swap or flip your active boat token whenever your boat changes Point of Sail or changes tacks via a [`Tack`](#term-tack) or [`Gybe`](#term-gybe) maneuver.
 
 > [!TIP]
-> **How to Escape Irons:** When your boat is in [Irons](#term-irons) (facing 0° North), you cannot play `Sail` or [`Head Up`](#term-head-up). To get out of Irons, play a **[`Bear Off`](#term-bear-off)** action card (which turns your boat 60° to [Close-Hauled](#term-close-hauled), even at Momentum 0). Alternatively, play **[`Luff`](#term-luff)** to spill wind and remain in place until you can bear off.
+> **How to Escape Irons:** When your boat is in [Irons](#term-irons) (facing 0° North), you cannot play [`Trim`](#term-trim) or [`Head Up`](#term-head-up). To get out of Irons, play a **[`Bear Off`](#term-bear-off)** action card (which turns your boat 60° to [Close-Hauled](#term-close-hauled), even at Momentum 0). Alternatively, play **[`Luff`](#term-luff)** to spill wind and remain in place until you can bear off.
 
 ---
 
@@ -69,9 +69,9 @@ Wind direction is set along hex grid axes. The 6 hex directions relative to the 
 1. Set the **Wind direction marker** pointing straight down the board (North to South / 0° to 180°).
 2. Set the **starting line length** to at least equal the number of boats (e.g., if there are 4 boats, use at least 4 hexes between the pin and committee boat).
 3. Setup [windward](#term-windward) and [leeward](#term-leeward) [marks](#term-mark) as required by the race course.
-4. Use the **boat number cards** to randomly assign boats to players (each boat has a matching maneuver deck).
-5. The player assigned **boat #1** is the Starting Player.
-6. The starting player places their boat on a hex anywhere in the pre-start area at any [point of sail](#term-points-of-sail) and at any starting momentum (from Momentum 0 up to the Point of Sail's maximum momentum). Then place boat #2, etc. Each subsequent boat must be placed at least 2 hexes away from any previously placed boat.
+4. Players randomly choose their boats (each boat has a matching maneuver deck). Roll a die to determine the starting player.
+5. The starting player places their boat on a hex anywhere in the pre-start area at any [point of sail](#term-points-of-sail) and at any starting momentum (from Momentum 0 up to the Point of Sail's maximum momentum). 
+6. Proceeding clockwise, each subsequent player places their boat. Each subsequent boat must be placed at least 2 hexes away from any previously placed boat.
 
 ### Starting Line Layout (Flat-Topped Hexes — Vertical Columns)
 On a flat-topped hex grid arranged in vertical columns, North (0°) and South (180°) move straight up and down along vertical columns, while adjacent columns stagger diagonally. 
@@ -117,15 +117,17 @@ To legally complete a race, boats must follow official Sailing Instructions (RRS
   1. **Leg 1 (Upwind)**: Start Line ➔ [Windward Mark](#term-windward) *(round leaving mark to [Port](#term-port) / Left)*.
   2. **Leg 2 (Downwind Finish)**: Windward Mark ➔ Downwind Finish Line *(Start Line)*.
 
-#### 📐 Course 3: Olympic Triangle (3 Legs — 35–45 Mins)
+#### 📐 Course 3: Triangle (5 Legs — 35–45 Mins)
 *An advanced course testing broad reach speed, gybing maneuvers, and mark rounding strategy.*
 - **[Windward Mark](#term-windward)**: Placed 8 hexes North (0° upwind) of the starting line.
 - **Reach Mark (Wing)**: Placed 6 hexes South-West (240°) from the Windward Mark (left of windward).
 - **[Leeward Mark](#term-leeward)**: Placed 6 hexes South-East (120°) from the Reach Mark (directly downwind of the Windward Mark).
 - **Leg Sequence**:
   1. **Leg 1 (Upwind)**: Start Line ➔ [Windward Mark](#term-windward) *(leave to [Port](#term-port) / Left)*.
-  2. **Leg 2 (Reaching Triangle)**: Windward Mark ➔ Reach Mark *(leave to [Port](#term-port) / Left)* ➔ [Leeward Mark](#term-leeward) *(leave to [Port](#term-port) / Left)*.
-  3. **Leg 3 (Upwind Finish)**: Leeward Mark ➔ Finish Line *(Start Line)*.
+  2. **Leg 2 (Reaching)**: Windward Mark ➔ Reach Mark *(leave to [Port](#term-port) / Left)*.
+  3. **Leg 3 (Reaching)**: Reach Mark ➔ [Leeward Mark](#term-leeward) *(leave to [Port](#term-port) / Left)*.
+  4. **Leg 4 (Upwind)**: Leeward Mark ➔ [Windward Mark](#term-windward) *(leave to [Port](#term-port) / Left)*.
+  5. **Leg 5 (Downwind Finish)**: Windward Mark ➔ Downwind Finish Line *(Start Line)*.
 
 ### Fast-Play / Quick-Start Rules (10–15 Min Sprint)
 For introductory games or fast tabletop sessions that finish in **10 to 15 minutes max**, use these streamlined rules:
@@ -196,8 +198,8 @@ Roll **2d6** on the wind shift table:
 | **[Bear Off](#term-bear-off)** | x2 | Any except [Run](#term-run) | None (Allowed at Momentum 0) | Move **1 hex forward**, rotate facing 60° away from the wind. *(If played at Momentum 0 to exit Irons, pivots in place with 0 hex forward movement).* |
 | **[Tack](#term-tack)** | x1 | [Close-Hauled](#term-close-hauled) | Momentum 1+ | Move **1 hex forward**, rotate facing 120° across the wind to opposite tack, reduce Momentum by 1 (min Momentum 0). |
 | **[Gybe](#term-gybe)** | x1 | [Run](#term-run) | Momentum 1+ | Move **1 hex forward**, flip tack ([Port](#term-port)/[Starboard](#term-starboard)) downwind. |
-| **[Luff](#term-luff)** | x2 | [Close-Hauled](#term-close-hauled), [Broad-Reach](#term-broad-reach), or [Irons](#term-irons) | None (Allowed at Momentum 0) | Move **1 hex forward** (if Momentum 1+) and reduce Momentum by 1 (min Momentum 0). |
-| **Sail** | x4 | Any except [Irons](#term-irons) | None | Move **1 hex forward**, increase Momentum by 1 (up to POS max momentum cap). |
+| **[Luff](#term-luff)** | x2 | [Close-Hauled](#term-close-hauled), [Broad-Reach](#term-broad-reach), or [Irons](#term-irons) | None (Allowed at Momentum 0) | Move **1 hex forward** and reduce Momentum by 1. *(If played at Momentum 0, boat does not move).* |
+| **[Trim](#term-trim)** | x4 | Any except [Irons](#term-irons) | None | Move **1 hex forward**, increase Momentum by 1 (up to POS max momentum cap). |
 
 #### Phase 3: Movement Phase
 
@@ -205,22 +207,23 @@ Roll **2d6** on the wind shift table:
 At the start of the Movement Phase, initiative determines turn order:
 1. The player whose boat is furthest **[upwind](#term-windward)** (closest to the wind source) has **Initiative** and acts first.
 2. If tied for upwind distance, the boat with **higher Momentum** acts first.
-3. If still tied, the boat with the **lowest sail number** acts first.
+3. If still tied, the tied players roll a **1d6**, with the highest roll acting first.
 
 ##### Point of Sail Momentum Limits
-Each **Sail** action increases Momentum by 1 up to the maximum momentum for your current [Point of Sail](#term-points-of-sail):
+Each **[Trim](#term-trim)** action increases Momentum by 1 up to the maximum momentum for your current [Point of Sail](#term-points-of-sail):
 
 | Point of Sail | Base Max Momentum | With Global Puff (+1) | Effect |
 |---|:---:|:---:|---|
 | **[Close-Hauled](#term-close-hauled)** | 4 | 5 | Upwind point of sail. |
 | **[Broad-Reach](#term-broad-reach)** | 5 | **6** *(Max d6!)* | Reaching point of sail (Fastest!). |
 | **[Run](#term-run)** | 4 | 5 | Downwind point of sail. |
-| **[Irons](#term-irons)** | — | — | Momentum automatically reduced by 1 at start of turn. Cannot play `Sail`. |
+| **[Irons](#term-irons)** | — | — | Momentum automatically reduced by 1 at start of turn. Cannot play [`Trim`](#term-trim). |
 
 ##### Action Resolution (Round-Robin)
 Movement is executed in 4 **Action Steps** (Action 1 through Action 4):
 1. For each Action Step, all players reveal their planned card for that step in Initiative order.
 2. **The Golden Movement Rule**: Whenever your boat has **Momentum 1+**, playing ANY maneuver card moves your boat **1 hex forward** in your current facing direction first before applying rotation or momentum changes. *(At Momentum 0, `Bear Off` pivots 60° away from the wind in place with 0 hex forward movement).*
+3. **Board Boundaries**: If a boat's forward movement would cause it to move off the physical edge of the game board (outside the course's coordinate bounds), it hits the invisible wall. The boat's movement is canceled for that action step, and its Momentum immediately drops to 0.
 3. **Illegal Actions**: If an action is illegal for the current POS or momentum state, it is discarded without effect. If the boat has forward momentum (Momentum 1+), it coasts forward 1 hex without rotating; if Momentum is 0, the boat remains in place.
 4. **Instant Collision & ROW Resolution**: Collision checks and Right-of-Way evaluations occur **instantly during each Action Step**. If a boat enters a hex occupied by another boat (or both enter the same hex during an Action Step), a collision occurs immediately on that step and ROW rules determine who receives a Protest card.
 
@@ -267,9 +270,9 @@ All players retrieve their played action cards back into their hand for the next
 
 #### Example Hex Movements & Foul Scenarios
 
-* **Example 1 (Rule 10: Starboard vs. Port Crossing)**: Boat A (Starboard Tack) and Boat B (Port Tack) are converging diagonally toward the same empty hex on an upwind leg. Both boats play `Sail` and attempt to enter that hex on the same action step. Because Starboard Tack has Right-of-Way, **Boat B (Port Tack) fouls Boat A and incurs a Protest card**.
-* **Example 2 (Rule 11: Windward vs. Leeward Collisions)**: Boat A (Windward) and Boat B (Leeward) are sailing close-hauled side-by-side in adjacent hex columns. Boat A has initiative and plays `Bear Off` + `Sail`, steering down into the hex currently occupied by Boat B. Because the Leeward boat has Right-of-Way, **Boat A (Windward) fouls Boat B and incurs a Protest card**.
-* **Example 3 (Rule 12: Overrunning a Boat Ahead Downwind)**: On a downwind leg (sailing South), Boat A is cruising ahead at Momentum 2. Boat B is trailing directly behind in the same hex line at Momentum 4. Boat B plays `Sail` + `Sail`, overrunning and ramming Boat A from behind. Because a boat coming from behind must keep clear of the boat ahead, **Boat B (Astern) fouls Boat A and incurs a Protest card**.
+* **Example 1 (Rule 10: Starboard vs. Port Crossing)**: Boat A (Starboard Tack) and Boat B (Port Tack) are converging diagonally toward the same empty hex on an upwind leg. Both boats play [`Trim`](#term-trim) and attempt to enter that hex on the same action step. Because Starboard Tack has Right-of-Way, **Boat B (Port Tack) fouls Boat A and incurs a Protest card**.
+* **Example 2 (Rule 11: Windward vs. Leeward Collisions)**: Boat A (Windward) and Boat B (Leeward) are sailing close-hauled side-by-side in adjacent hex columns. Boat A has initiative and plays [`Bear Off`](#term-bear-off) + [`Trim`](#term-trim), steering down into the hex currently occupied by Boat B. Because the Leeward boat has Right-of-Way, **Boat A (Windward) fouls Boat B and incurs a Protest card**.
+* **Example 3 (Rule 12: Overrunning a Boat Ahead Downwind)**: On a downwind leg (sailing South), Boat A is cruising ahead at Momentum 2. Boat B is trailing directly behind in the same hex line at Momentum 4. Boat B plays [`Trim`](#term-trim) + [`Trim`](#term-trim), overrunning and ramming Boat A from behind. Because a boat coming from behind must keep clear of the boat ahead, **Boat B (Astern) fouls Boat A and incurs a Protest card**.
 * **Example 4 (Rule 13: Tacking into a Collision)**: Boat A (on Starboard Tack) plays a [`Tack`](#term-tack) card, moving forward 1 hex directly into the hex occupied by Boat B and tacking onto Port Tack. Because a tacking boat has no Right-of-Way under RRS Rule 13 while executing a tack, **Boat A (Tacking) fouls Boat B and incurs a Protest card**. *(Note: Tacking into an empty hex 1 space ahead of another boat without colliding is 100% legal!).*
 
 ---
@@ -351,7 +354,7 @@ If two or more boats are tied in total series points:
 
 ---
 
-## Glossary of Nautical & Racing Terms
+## Definitions
 > *"Beyond the edge of the chart there be dragons, but also the joy of discovery."*
 
 For players new to sailing, here is a quick reference guide to common sailing and racing terms used in Cardboard Regatta:
@@ -374,6 +377,7 @@ For players new to sailing, here is a quick reference guide to common sailing an
 | <a id="term-head-up"></a>**Head Up** | Steering the boat closer toward the wind direction (60° turn). |
 | <a id="term-bear-off"></a>**Bear Off (Bear Away)** | Steering the boat further away from the wind direction (60° turn). |
 | <a id="term-luff"></a>**Luff** | Easing sails to spill wind and slow down without changing facing direction. |
+| <a id="term-trim"></a>**Trim** | Adjusting sails to catch wind. The primary action card to increase momentum and sail 1 hex forward. |
 | <a id="term-right-of-way"></a>**Right-of-Way (ROW)** | The legal entitlement under RRS Part 2 of a boat to hold its position/course. Other boats must *[Keep Clear](#term-keep-clear)*. |
 | <a id="term-keep-clear"></a>**Keep Clear** | Steering/positioning your boat so a [Right-of-Way](#term-right-of-way) boat can sail her course without taking avoiding action. |
 | <a id="term-clear-ahead"></a>**Clear Ahead / Clear Astern** | A boat is *Clear Astern* when its hull is entirely behind an imaginary line perpendicular to a boat ahead (*Clear Ahead*). |

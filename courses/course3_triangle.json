@@ -1,0 +1,67 @@
+{
+  "name": "Course 3: Triangle (5 Legs)",
+  "board_bounds": {
+    "q_min": -15,
+    "q_max": 15,
+    "r_min": -18,
+    "r_max": 15
+  },
+  "start_line": {
+    "committee_boat": [
+      0,
+      0
+    ],
+    "pin_mark": [
+      -4,
+      0
+    ]
+  },
+  "marks": [
+    {
+      "id": "windward_mark",
+      "name": "Windward Mark",
+      "pos": [
+        -2,
+        -8
+      ],
+      "rounding_direction": "Port"
+    },
+    {
+      "id": "reach_mark",
+      "name": "Reach Mark (Wing)",
+      "pos": [
+        -8,
+        -2
+      ],
+      "rounding_direction": "Port"
+    },
+    {
+      "id": "leeward_mark",
+      "name": "Leeward Mark",
+      "pos": [
+        -2,
+        4
+      ],
+      "rounding_direction": "Port"
+    },
+    {
+      "id": "windward_mark_lap2",
+      "name": "Windward Mark (Lap 2)",
+      "pos": [
+        -2,
+        -8
+      ],
+      "rounding_direction": "Port"
+    }
+  ],
+  "finish_line": {
+    "committee_boat": [
+      0,
+      0
+    ],
+    "pin_mark": [
+      -4,
+      0
+    ]
+  }
+}
