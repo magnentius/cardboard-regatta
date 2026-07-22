@@ -1,4 +1,6 @@
-# Cardboard Regatta
+# ⛵ Cardboard Regatta: Official Rulebook
+
+![Cardboard Regatta Cover Art](images/cardboard_regatta.png)
 
 ## Table of Contents
 - [Components & Core Concepts](#components--core-concepts)
