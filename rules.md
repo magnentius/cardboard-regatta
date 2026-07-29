@@ -80,17 +80,15 @@ On a flat-topped hex grid arranged in vertical columns, North (0°) and South (1
 
 With wind blowing straight down the board (North to South / 0° to 180°), the starting line is defined as follows:
 - **The Starting Line**: The imaginary straight line segment connecting the center of the [Pin Mark](#term-pin-mark) hex to the center of the [Committee Boat](#term-committee-boat) hex.
-- **Dynamic Line Length**: The length of the starting line is determined during setup:
-  $$\text{Start Line Length (hexes)} = \text{Number of Entered Boats} + \mathbf{1d6}$$
+- **Static Line Length**: The length of the starting line is determined during setup:
+  $$\text{Start Line Length (hexes)} = \text{Number of Entered Boats} + 2$$
   * *Committee Boat* is placed at `(0, 0)`.
   * *Pin Mark* is placed $L$ hexes to the left at `(-L, 0)`.
   * *Course Axis (Marks)*: Buoys are placed along column $q = -L \div 2$ to align with the center of the line.
 - **Line Boundaries**:
   - **Pre-Start Area**: All hexes lying entirely on the South ([downwind](#term-leeward)) side of the starting line segment.
   - **Course Side**: All hexes lying entirely on the North ([upwind](#term-windward)) side of the starting line segment.
-  - **Split Line Hexes**: If a boat is in a hex that is bisected/split by the starting line segment when the start gun fires, roll **1d6**:
-    - **1–3**: The boat is on the **Course Side ([OCS](#term-ocs))**.
-    - **4–6**: The boat is in the **Pre-Start Area**.
+  - **Split Line Hexes**: If a boat is in a hex that is bisected/split by the starting line segment when the start gun fires, the boat is considered to be in the **Pre-Start Area**.
   - **Crossing the Line**: A boat legally starts when its movement path moves from a pre-start hex across the imaginary line segment (between the [Pin Mark](#term-pin-mark) and [Committee Boat](#term-committee-boat)) into a course hex.
 
 ### Sailing Instructions (Sailing the Course)
@@ -155,7 +153,7 @@ graph LR
 - Players maneuver for starting position during these 3 turns using standard Planning and Movement phases.
 - Use a **d6** to count down the 3 pre-start turns (3, 2, 1).
 - **On Course Side ([OCS](#term-ocs)) Rule**: At the end of Turn -1 (when the start gun fires), any boat on the course side of the starting line is **[OCS](#term-ocs)**.
-  - **Split Hex Determination**: If a boat ends Turn -1 on a hex that is split by the starting line segment, roll **1d6**: on **1–3**, the boat is **[OCS](#term-ocs)**; on **4–6**, the boat counts as **Pre-Start**.
+  - **Split Hex Determination**: If a boat ends Turn -1 on a hex that is split by the starting line segment, the boat counts as **Pre-Start**.
   - An OCS boat must maneuver its token so that it is **entirely on the pre-start side of the starting line** before it can legally cross the start line to begin Leg 1.
   - **OCS [Right-of-Way](#term-right-of-way)**: A boat returning to the pre-start side after starting early ([OCS](#term-ocs)) has **no [Right-of-Way](#term-right-of-way)** and must [keep clear](#term-keep-clear) of all boats that started legally.
 
@@ -206,7 +204,7 @@ Roll **2d6** on the wind shift table:
 #### Phase 3: Movement Phase
 
 ##### Initiative
-At the start of the Movement Phase, initiative determines turn order:
+At the start of the Movement Phase, initiative determines turn order **for the entire phase** (all 4 Action Steps). Do not recalculate initiative during the movement phase.
 1. The player whose boat is furthest **[upwind](#term-windward)** (closest to the wind source) has **Initiative** and acts first.
 2. If tied for upwind distance, the boat with **higher Momentum** acts first.
 3. If still tied, the tied players roll a **1d6**, with the highest roll acting first.
@@ -240,11 +238,11 @@ All players retrieve their played action cards back into their hand for the next
 ### Wind Shadow
 - **[Wind Shadow](#term-wind-shadow) Area**: The 2 hexes directly [downwind](#term-leeward) of any boat (in the direction the wind is blowing, independent of the boat's facing angle).
 - **Planning Phase Effect**: If your boat *starts* the Planning Phase in another boat's [Wind Shadow](#term-wind-shadow), its maximum momentum for the round is reduced by 1 (minimum max momentum 1). You still plan all 4 action cards.
-- **Movement Phase Effect**: If your boat *enters* a [Wind Shadow](#term-wind-shadow) during movement, its current Momentum is immediately reduced by 1.
+- **Movement Phase Effect**: Wind shadow is ignored if dynamically entered during the Movement Phase. It only applies if you start the round in a shadow.
 
 ### Rounding Marks
-- **Ending in a Mark Hex**: If you end an Action Step or turn in a hex containing a [mark](#term-mark), you hit the mark and incur a **Protest card**.
-- **Passing Through a Mark**: If a boat moves *through* a hex containing a [mark](#term-mark) during an Action Step without ending its turn there, roll **1d6**. On a roll of **1**, the boat hits the mark and incurs a **Protest card**.
+- **Ending in a Mark Hex**: If you end an Action Step in a hex containing a [mark](#term-mark), you hit the mark and incur a **Protest card**.
+- **Passing Through a Mark**: Boats may safely move *through* a hex containing a mark during an Action Step without penalty, provided they do not end the step in that hex.
 - **Mark Penalty Limit**: A boat can receive a maximum of 1 Protest card per round from any individual mark.
 
 ### Fouling & Right-of-Way (ROW) Rules
@@ -284,8 +282,7 @@ All players retrieve their played action cards back into their hand for the next
 
 ### Incurring a Protest Card
 A boat takes a **Protest card** if it:
-- Ends an Action Step or turn in a hex containing a [mark](#term-mark) on the current leg.
-- Moves through a mark's hex and rolls a **1** on **1d6**.
+- Ends an Action Step in a hex containing a [mark](#term-mark) on the current leg.
 - Violates [Right-of-Way](#term-right-of-way) and collides with another boat into the same hex.
 
 > [!NOTE]
@@ -307,9 +304,7 @@ A boat takes a **Protest card** if it:
 
 - **Finish Line Layout**: The finish line is the imaginary straight line segment connecting the centers of the two finish line [marks](#term-mark) (such as the [Pin Mark](#term-pin-mark) and [Committee Boat](#term-committee-boat)).
 - **Crossing the Finish Line**: A boat finishes the race when its movement path crosses the imaginary finish line segment between the two marks from the course side to the finish side.
-- **Split Finish Line Hexes**: If a boat ends an Action Step in a hex that is bisected/split by the finish line segment, roll **1d6**:
-  - **1–3**: The boat is determined to still be on the **Course Side** (has not legally finished yet).
-  - **4–6**: The boat is determined to be on the **Finish Side** (legally finished!).
+- **Split Finish Line Hexes**: If a boat ends an Action Step in a hex that is bisected/split by the finish line segment, the boat is determined to be on the **Finish Side** (legally finished!).
 
 ---
 

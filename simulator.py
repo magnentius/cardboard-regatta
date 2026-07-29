@@ -568,9 +568,9 @@ class RegattaSimulator:
         self.log_file_path = log_file
         self.verbose = verbose
         
-        # Dynamic Start Line Length: num_boats + 1d6 roll
-        self.d6_line_roll = random.randint(1, 6)
-        self.line_length = self.num_boats + self.d6_line_roll
+        # Static Start Line Length: num_boats + 2
+        self.d6_line_roll = 2
+        self.line_length = self.num_boats + 2
         
         # Calculate q shift to maintain course shape relative to center
         original_mid_q = (self.course.pin_mark[0] + self.course.committee_boat[0]) // 2
@@ -688,7 +688,7 @@ class RegattaSimulator:
         self.log(f"⛵ CARDBOARD REGATTA SIMULATOR Engine")
         self.log(f"==================================================================")
         self.log(f"Course: {self.course.name}")
-        self.log(f"Fleet Size: {self.num_boats} Boats | Line Length: {self.line_length} Hexes ({self.num_boats} Boats + 1d6 Roll: {self.d6_line_roll})")
+        self.log(f"Fleet Size: {self.num_boats} Boats | Line Length: {self.line_length} Hexes ({self.num_boats} Boats + 2)")
         self.log(f"Start Line: Pin {self.course.pin_mark} <===> Committee Boat {self.course.committee_boat}")
         self.log(f"Laps: {self.total_laps} | Wind Shifts: {self.wind_shifts} | Forecast: {self.wind_forecast}")
         self.log(f"Pre-Start Countdown: {self.prestart_turns} Turns | Est. Turn Time: {self.est_turn_time_sec}s")
@@ -703,7 +703,7 @@ class RegattaSimulator:
                 
             self.log(f"\n🚀 START GUN FIRES! Checking for OCS (On Course Side) boats...")
             for b in self.boats:
-                if b.pos[1] <= 0:
+                if b.pos[1] < 0:
                     b.is_returning_ocs = True
                     self.log(f"⚠️ {b.name} is OCS at (q={b.pos[0]}, r={b.pos[1]})! Must return to pre-start side.")
                 else:
@@ -807,11 +807,14 @@ class RegattaSimulator:
             self.log(f"📋 {b.name} plans: {plan}")
 
         # Phase 4: Movement Phase (4 Action Steps)
+        # Static Initiative: Turn order determined once at the start of Phase 4
+        initiative_order = [b for b in self.boats if not b.finished and not b.disqualified]
+        initiative_order.sort(key=lambda x: (x.pos[1], -x.speed, random.random()))
+        
         for step in range(4):
             self.log(f"\n --- Action Step {step + 1} ---")
             
-            active_boats = [b for b in self.boats if not b.finished and not b.disqualified]
-            active_boats.sort(key=lambda x: (x.pos[1], -x.speed, random.random()))
+            active_boats = [b for b in initiative_order if not b.finished and not b.disqualified]
             
             for b in active_boats:
                 card = plans[b.boat_id][step]
@@ -900,7 +903,7 @@ class RegattaSimulator:
                     else:
                         self.log(f"🛑 {b.name} plays Luff at Speed 0 in place. Speed remains 0.")
 
-                if b.is_returning_ocs and b.pos[1] > 0:
+                if b.is_returning_ocs and b.pos[1] >= 0:
                     b.is_returning_ocs = False
                     self.log(f"✅ {b.name} has cleared OCS penalty and is legally in the race!")
 
@@ -954,18 +957,14 @@ class RegattaSimulator:
                                 self.metrics["winning_round"] = round_num
                             self.log(f"🏁 {b.name} CLEANLY CROSSES THE FINISH LINE! (Step {step + 1})")
                         elif prev_pos[1] != 0 and b.pos[1] == 0:
-                            # Landed on bisected / split finish line hex r = 0 -> Roll 1d6
-                            finish_roll = random.randint(1, 6)
-                            if finish_roll >= 4:
-                                b.finished = True
-                                b.finish_round = round_num if isinstance(round_num, int) else 0
-                                b.finish_step = step + 1
-                                self.finishers_count += 1
-                                if self.finishers_count == 1:
-                                    self.metrics["winning_round"] = round_num
-                                self.log(f"🎲 1d6 Split Finish Hex Roll: {finish_roll} -> FINISH SIDE (4-6)! 🏁 {b.name} CROSSES THE FINISH LINE! (Step {step + 1})")
-                            else:
-                                self.log(f"🎲 1d6 Split Finish Hex Roll: {finish_roll} -> COURSE SIDE (1-3). {b.name} remains on course side at (q={b.pos[0]}, r=0).")
+                            # Landed on bisected / split finish line hex r = 0 -> Always Finish Side
+                            b.finished = True
+                            b.finish_round = round_num if isinstance(round_num, int) else 0
+                            b.finish_step = step + 1
+                            self.finishers_count += 1
+                            if self.finishers_count == 1:
+                                self.metrics["winning_round"] = round_num
+                            self.log(f"🏁 Split Finish Hex -> FINISH SIDE! {b.name} CROSSES THE FINISH LINE! (Step {step + 1})")
             
             # Step-by-step hex collision & Right-of-Way protest resolution
             self._resolve_step_collisions(step)
@@ -1013,6 +1012,19 @@ class RegattaSimulator:
                     foul_boat.red_flags = foul_boat.protests
                     self.metrics["protests_count"] = self.metrics.get("protests_count", 0) + 1
                     self.log(f"🚩 PROTEST! {foul_boat.name} violated {rule_violated} against {row_boat.name} at {hex_pos}! Incurs a Protest Card (Max 1 per Round).")
+
+        # Mark Collisions
+        mark_hexes = [m["pos"] for m in self.course.marks]
+        for b in self.boats:
+            if b.finished or b.disqualified:
+                continue
+            if b.pos in mark_hexes:
+                if not getattr(b, "received_protest_this_round", False):
+                    b.received_protest_this_round = True
+                    b.protests += 1
+                    b.red_flags = b.protests
+                    self.metrics["protests_count"] = self.metrics.get("protests_count", 0) + 1
+                    self.log(f"🚩 PROTEST! {b.name} hit a mark at {b.pos}! Incurs a Protest Card (Max 1 per Round).")
 
     def _print_final_standings(self):
         self.log(f"\n==================================================================")
