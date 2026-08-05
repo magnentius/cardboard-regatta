@@ -29,8 +29,8 @@ Whether you're a seasoned sailor or a tabletop strategist, **Cardboard Regatta**
 
 | Specification | Details |
 |---|---|
-| **Players** | 2 – 6 Players |
-| **Play Time** | 30 – 45 Minutes |
+| **Players** | 2 – 8 Players |
+| **Play Time** | 15 – 50 Minutes (by course) |
 | **Complexity** | Easy to Learn, High Tactical Depth |
 | **Mechanisms** | Action Programming, Grid Movement, Initiative, Secret Selection |
 

@@ -1,29 +1,21 @@
 {
   "name": "Course 2: Standard Windward-Leeward (3 Legs)",
-  "board_bounds": {
-    "q_min": -30, "q_max": 30,
-    "r_min": -30, "r_max": 30
-  },
-  "start_line": {
-    "committee_boat": [0, 0],
-    "pin_mark": [-4, 0]
-  },
+  "description": "Start -> Windward Mark -> Leeward Mark -> upwind finish at the start line.",
+  "board_margin": 8,
   "marks": [
     {
       "id": "windward_mark",
       "name": "Windward Mark",
-      "pos": [-2, -10],
+      "upwind": 10,
+      "across": 0,
       "rounding_direction": "Port"
     },
     {
       "id": "leeward_mark",
       "name": "Leeward Mark",
-      "pos": [-2, 4],
+      "upwind": -10,
+      "across": 0,
       "rounding_direction": "Port"
     }
-  ],
-  "finish_line": {
-    "committee_boat": [0, 0],
-    "pin_mark": [-4, 0]
-  }
+  ]
 }

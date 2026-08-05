@@ -1,67 +1,35 @@
 {
   "name": "Course 3: Triangle (5 Legs)",
-  "board_bounds": {
-    "q_min": -15,
-    "q_max": 15,
-    "r_min": -18,
-    "r_max": 15
-  },
-  "start_line": {
-    "committee_boat": [
-      0,
-      0
-    ],
-    "pin_mark": [
-      -4,
-      0
-    ]
-  },
+  "description": "Start -> Windward -> Reach (wing) -> Leeward -> Windward -> downwind finish. Reach Mark lies 6 hexes at 240 degrees from the Windward Mark; the Leeward Mark 6 hexes at 120 degrees from the Reach Mark, directly downwind of the Windward Mark.",
+  "board_margin": 8,
   "marks": [
     {
       "id": "windward_mark",
       "name": "Windward Mark",
-      "pos": [
-        -2,
-        -8
-      ],
+      "upwind": 8,
+      "across": 0,
       "rounding_direction": "Port"
     },
     {
       "id": "reach_mark",
       "name": "Reach Mark (Wing)",
-      "pos": [
-        -8,
-        -2
-      ],
+      "upwind": 5,
+      "across": -6,
       "rounding_direction": "Port"
     },
     {
       "id": "leeward_mark",
       "name": "Leeward Mark",
-      "pos": [
-        -2,
-        4
-      ],
+      "upwind": 2,
+      "across": 0,
       "rounding_direction": "Port"
     },
     {
       "id": "windward_mark_lap2",
       "name": "Windward Mark (Lap 2)",
-      "pos": [
-        -2,
-        -8
-      ],
+      "upwind": 8,
+      "across": 0,
       "rounding_direction": "Port"
     }
-  ],
-  "finish_line": {
-    "committee_boat": [
-      0,
-      0
-    ],
-    "pin_mark": [
-      -4,
-      0
-    ]
-  }
+  ]
 }
