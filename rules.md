@@ -46,7 +46,7 @@
 - **Wind Forecast Marker** (a second, distinct marker on the Compass Rose — the wind arriving *next* round)
 - **Momentum Tracker for each player** (a 0–6 dial or track on the player mat. Note a plain d6 cannot show 0, and 6 is reachable on a [Broad Reach](#term-broad-reach) in a [Puff](#term-puff), so use a track rather than a die)
 - **2d6** (a pair of six-sided dice, for global wind shift and wind forecast rolls)
-- **Protest Cards** (for tracking RRS Rule violations and penalty discards)
+- **Protest Cards** (one per player, to mark that a penalty is owed)
 
 ### Points of Sail & Hex Geometry
 Wind direction is set along hex grid axes. The 6 hex directions relative to the wind direction correspond to four [Points of Sail](#term-points-of-sail):
@@ -99,7 +99,7 @@ On a flat-topped hex grid arranged in vertical columns, North (0°) and South (1
 | 5 | 300° up-left | `(-5, 2)` | +½ |
 | 6 | 240° down-left | `(-6, 3)` | **0 — Pin Mark** |
 
-- **Course Axis (Marks)**: All course [marks](#term-mark) are set from the **centre of the line**, measured in hexes **directly upwind (0°)** — so a mark "10 hexes upwind" sits 10 hexes due North of the line's midpoint.
+- **Course Axis (Marks)**: All course [marks](#term-mark) are set from the **centre of the line**. The main measurement is in hexes **directly upwind (0°)** — so a mark "10 hexes upwind" sits 10 hexes due North of the line's midpoint. A mark set off to one side (such as the Triangle's Reach Mark) also gives an **across** offset, counted in hexes along the line.
 - **Line Boundaries**:
   - **Pre-Start Area**: All hexes lying entirely on the South ([downwind](#term-leeward)) side of the starting line segment.
   - **Course Side**: All hexes lying entirely on the North ([upwind](#term-windward)) side of the starting line segment.
@@ -119,7 +119,7 @@ To legally complete a race, boats must follow official Sailing Instructions (RRS
 > [!NOTE]
 > Every mark below is measured **in hexes directly upwind (0°) from the centre of the starting line**. A negative figure means downwind. Courses are numbered easiest first, and match the files in `courses/`.
 >
-> Times are for **4 boats** with the 15-round [Finishing Window](#the-finishing-window), at roughly a minute a round. More boats means more action steps per round, so allow longer.
+> Times are for **4 boats** with the 20-round [Finishing Window](#the-finishing-window), at roughly a minute a round. More boats means more action steps per round, so allow longer.
 
 #### ⚡ Course 1: Beginner Sprint (2 Legs — 15–20 Mins)
 *A fast, action-packed introductory race designed for rapid tabletop play and learning points of sail.*
@@ -173,7 +173,7 @@ graph LR
 - Use a **d6** to count down the 3 pre-start turns (3, 2, 1).
 - **On Course Side ([OCS](#term-ocs)) Rule**: At the end of Turn -1 (when the start gun fires), any boat on the course side of the starting line is **[OCS](#term-ocs)**.
   - **Split Hex Determination**: If a boat ends Turn -1 on a hex that is split by the starting line segment, the boat counts as **Pre-Start**.
-  - An OCS boat must maneuver its token so that it is **entirely on the pre-start side of the starting line** before it can legally cross the start line to begin Leg 1.
+  - An OCS boat must sail back to the **pre-start side of the starting line** — a hex split by the line counts, as above — before she can legally cross it to begin Leg 1.
   - **OCS [Right-of-Way](#term-right-of-way)**: A boat returning to the pre-start side after starting early ([OCS](#term-ocs)) has **no [Right-of-Way](#term-right-of-way)** and must [keep clear](#term-keep-clear) of all boats that started legally.
 
 ---
@@ -233,7 +233,7 @@ Roll **2d6** on the wind shift table:
 #### Phase 2: Planning Phase
 
 > [!IMPORTANT]
-> **Momentum Is Your Action Count.** Read your **Momentum die** at the start of the Planning Phase. That number is how many action cards you play this round — a boat at Momentum 4 plays 4 cards and sails up to 4 hexes; a boat at Momentum 2 plays only 2. Momentum is your boat's speed, and speed is how much you get done.
+> **Momentum Is Your Action Count.** Read your **Momentum tracker** at the start of the Planning Phase. That number is how many action cards you play this round — a boat at Momentum 4 plays 4 cards and sails up to 4 hexes; a boat at Momentum 2 plays only 2. Momentum is your boat's speed, and speed is how much you get done.
 
 - **Action Slots = Current Momentum**, with a **minimum of 1** and a **maximum of 6**:
 
@@ -248,7 +248,7 @@ Roll **2d6** on the wind shift table:
 | **6** | 6 *(Broad Reach in a Puff — the fastest a boat can go)* |
 
 - Select that many action cards from your maneuver deck and place them face-down in order (Action 1, Action 2, and so on).
-- **Momentum you gain this round pays off next round.** A `Trim` raises your Momentum die immediately, but your slot count was already fixed when the round began — so trimming buys you speed for the *following* round. Boats accelerate: Momentum 1 ➔ 2 ➔ 4 ➔ cap.
+- **Momentum you gain this round pays off next round.** A `Trim` raises your Momentum tracker immediately, but your slot count was already fixed when the round began — so trimming buys you speed for the *following* round. Boats accelerate: Momentum 1 ➔ 2 ➔ 4 ➔ cap.
 - **Your deck is a real limit.** You only own **4 `Trim` cards**. A boat at Momentum 5 or 6 physically cannot fill every slot with `Trim` and must mix in steering cards — going flat out costs you your ability to hold a straight line.
 - Cards feature [Point of Sail](#term-points-of-sail) icons: **Green** for valid points of sail, **Red** for invalid points of sail.
 
@@ -256,10 +256,10 @@ Roll **2d6** on the wind shift table:
 | Action | Qty | Valid Points of Sail (POS) | Requirements | Maneuver Effects |
 |---|---|---|---|---|
 | **[Head Up](#term-head-up)** | x2 | Any except [Irons](#term-irons) | Momentum 1+ | Move **1 hex forward**, rotate facing 60° towards the wind (upwind / 0° North). |
-| **[Bear Off](#term-bear-off)** | x2 | Any except [Run](#term-run) | None (Allowed at Momentum 0) | Move **1 hex forward**, rotate facing 60° away from the wind. *(If played at Momentum 0 to exit Irons, pivots in place with 0 hex forward movement).* |
+| **[Bear Off](#term-bear-off)** | x2 | Any except [Run](#term-run) | None (Allowed at Momentum 0) | Move **1 hex forward**, rotate facing 60° away from the wind. *(At Momentum 0 she pivots in place with no forward movement — which is how you turn out of [Irons](#term-irons), and one of only two ways to hold station.)* |
 | **[Tack](#term-tack)** | x1 | [Close-Hauled](#term-close-hauled) | Momentum 1+ | Move **1 hex forward**, rotate facing 120° across the wind to opposite tack, reduce Momentum by 1 (min Momentum 0). |
 | **[Gybe](#term-gybe)** | x1 | [Run](#term-run) | Momentum 1+ | Move **1 hex forward**, flip tack ([Port](#term-port)/[Starboard](#term-starboard)). **Facing does not change** — the boom crosses and you stay dead downwind. |
-| **[Luff](#term-luff)** | x2 | [Close-Hauled](#term-close-hauled), [Broad-Reach](#term-broad-reach), or [Irons](#term-irons) | None (Allowed at Momentum 0) | Move **1 hex forward** and reduce Momentum by 1. *(If played at Momentum 0, boat does not move — this is the only way to hold station.)* |
+| **[Luff](#term-luff)** | x2 | [Close-Hauled](#term-close-hauled), [Broad-Reach](#term-broad-reach), or [Irons](#term-irons) | None (Allowed at Momentum 0) | Move **1 hex forward** and reduce Momentum by 1. *(If played at Momentum 0, boat does not move — this and `Bear Off` are the only ways to hold station.)* |
 | **[Trim](#term-trim)** | x4 | Any except [Irons](#term-irons) | None | Move **1 hex forward**, increase Momentum by 1 (up to POS max momentum cap). **Trim moves you even at Momentum 0** — it is how a stopped boat gets going again. |
 
 > [!NOTE]
@@ -301,13 +301,13 @@ Each **[Trim](#term-trim)** action increases Momentum by 1 up to the maximum mom
 ##### Action Resolution (Round-Robin)
 Movement is executed in a series of **Action Steps** (Action 1, Action 2, and so on, up to the highest number of cards any boat played this round):
 1. For each Action Step, all players who still have a card for that step reveal it in Initiative order. A boat with fewer cards than the step number simply sits this step out.
-2. **The Golden Movement Rule**: Whenever your boat has **Momentum 1+**, playing ANY maneuver card moves your boat **1 hex forward** in your current facing direction first before applying rotation or momentum changes. *(At Momentum 0, `Bear Off` pivots 60° away from the wind in place with 0 hex forward movement).*
+2. **The Golden Movement Rule**: Whenever your boat has **Momentum 1+**, playing ANY maneuver card moves your boat **1 hex forward** in your current facing direction first before applying rotation or momentum changes. *(At Momentum 0 nothing moves you except [`Trim`](#term-trim), which is how a stopped boat gets going again; `Bear Off` still pivots 60° in place, and `Luff` holds you where you are.)*
 3. **Board Boundaries**: If a boat's forward movement would cause it to move off the physical edge of the game board (outside the course's coordinate bounds), it hits the invisible wall. The boat's movement is canceled for that action step, and its Momentum immediately drops to 0.
 4. **Illegal Actions**: If an action is illegal for the current POS or momentum state, it is discarded without effect. If the boat has forward momentum (Momentum 1+), it coasts forward 1 hex without rotating; if Momentum is 0, the boat remains in place.
 5. **Instant Collision & ROW Resolution**: Collision checks and Right-of-Way evaluations occur **instantly during each Action Step**. If a boat enters a hex occupied by another boat (or both enter the same hex during an Action Step), a collision occurs immediately on that step and ROW rules determine who receives a Protest card.
 
 #### Phase 4: Cleanup Phase
-All players retrieve their played action cards back into their hand for the next round (except any cards set aside to clear a Protest).
+All players retrieve every action card they played back into their hand, ready for the next round. Nothing is held back — a Protest is served by playing **fewer** cards next round, not by removing cards from your deck.
 
 ---
 
@@ -334,7 +334,7 @@ Every boat leaves a wake of disturbed air to leeward of her. Park yourself upwin
 
   *Dirty air spreads as it travels, so the further to leeward you are the wider the bad patch. A single-file shadow would be almost impossible to aim.*
 
-- **Planning Phase Effect**: If your boat **starts** the round in another boat's [Wind Shadow](#term-wind-shadow), your **maximum momentum is reduced by 1** for that whole round (minimum max momentum 1). If your Momentum die is already above the reduced cap, **drop it to the cap immediately**.
+- **Planning Phase Effect**: If your boat **starts** the round in another boat's [Wind Shadow](#term-wind-shadow), your **maximum momentum is reduced by 1** for that whole round (minimum max momentum 1). If your Momentum tracker is already above the reduced cap, **drop it to the cap immediately**.
 - **Why it hurts**: Momentum is your action count, so being blanketed costs you a card — and therefore a hex — for the round, and it caps how far `Trim` can build you back up while you stay covered.
 - **Movement Phase Effect**: Wind shadow is checked **once**, on the positions boats hold at the start of the round. Sailing into a shadow later during the Movement Phase has no effect, and sailing out of one does not give your momentum back.
 
@@ -373,7 +373,7 @@ Every boat leaves a wake of disturbed air to leeward of her. Park yourself upwin
 ### Fouling & Right-of-Way (ROW) Rules
 
 > [!IMPORTANT]
-> **The Golden Hex Collision Rule:** A Right-of-Way foul **ONLY occurs when two boats attempt to occupy or enter the exact same hex at the same time**. Whenever two boats collide in the same hex, Right-of-Way priorities (Rules 10–14) determine which boat was at fault and incurs the **Protest card**.
+> **The Golden Hex Collision Rule:** A Right-of-Way foul **ONLY occurs when two boats attempt to occupy or enter the exact same hex at the same time**. Whenever two boats collide in the same hex, Right-of-Way priorities (Rules 10–13) determine which boat was at fault and incurs the **Protest card**.
 
 | RRS Rule | Sailing Rule Name | Tabletop Hex Grid Definition | Right-of-Way (ROW) Priority |
 |---|---|---|---|
@@ -439,7 +439,7 @@ A boat takes a **Protest card** if it:
 
 ### Clearing a Protest
 - A player **must clear their Protest card as soon as able** — on the very next Planning Phase.
-- **The Penalty**: You play **2 fewer action slots** that round (minimum 1). Work out your slots from your Momentum die as normal, then subtract 2.
+- **The Penalty**: You play **2 fewer action slots** that round (minimum 1). Work out your slots from your Momentum tracker as normal, then subtract 2.
 - You know you are serving the penalty *before* you commit cards, so plan the shorter round deliberately — this is your penalty turn, not a surprise.
 - At the end of that round, discard the Protest card. Your slots return to normal next round.
 
@@ -508,7 +508,7 @@ In each individual race, boats receive points matching their finishing order:
 > **There is no DSQ.** Cardboard Regatta has no disqualification of any kind — see [No Disqualification](#no-disqualification-never-dsq). A boat that fouls serves her penalty in action slots and sails on; the worst score on the sheet is DNF.
 
 ### Dead Heat Finishing Ties (RRS A7)
-In Cardboard Regatta, boats execute action steps sequentially based on initiative during Phase 4. If a boat crosses the finish line on Action Step 2, it finishes ahead of a boat crossing on Action Step 3. 
+In Cardboard Regatta, boats execute action steps sequentially based on initiative during the Movement Phase. If a boat crosses the finish line on Action Step 2, it finishes ahead of a boat crossing on Action Step 3. 
 
 However, if two or more boats cross the finish line on the **exact same Action Step** of the same round:
 * **Splitting Points (RRS A7)**: The points for the tied finishing position and the position(s) immediately below it are summed together and divided equally among the tied boats:

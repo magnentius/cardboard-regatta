@@ -1272,9 +1272,14 @@ class RegattaSimulator:
                 self.log(f"⚠️ {b.name} is in Irons! Speed reduced to {b.speed}.")
                 
             if puff_active:
-                max_s = b.get_max_speed(self.global_wind)
-                b.speed = min(max_s + 1, b.speed + 1)
-                self.log(f"💨 Puff boosts {b.name} speed to {b.speed}!")
+                # A gust does nothing for a boat stalled head to wind — her sails are
+                # flogging. rules.md caps Irons at 1 with or without a puff.
+                if b.get_pos_of_sail(self.global_wind) == "Irons":
+                    self.log(f"💨 Puff does nothing for {b.name} — she is in Irons.")
+                else:
+                    max_s = b.get_max_speed(self.global_wind)
+                    b.speed = min(max_s + 1, b.speed + 1)
+                    self.log(f"💨 Puff boosts {b.name} speed to {b.speed}!")
 
         # Wind Shadow is resolved once, on the positions boats hold at the start of
         # the round, and lasts the whole round. It is applied after the puff, so a
@@ -1615,12 +1620,20 @@ class RegattaSimulator:
                         foul_boat,
                         f"violated {rule_violated} against {row_boat.name} at {hex_pos}!")
 
-        # Mark Collisions
-        mark_hexes = [m["pos"] for m in self.course.marks]
+        # Mark collisions. Only the marks that bound the leg she is on can be hit —
+        # the one she is rounding now and the one she just left (RRS 31, and rules.md
+        # "a mark on the current leg"). Blundering into a buoy from a leg she is not
+        # sailing is not a foul, and penalising every mark on the board made a Triangle
+        # boat liable for a mark she had finished with two legs ago.
         for b in self.boats:
             if b.finished:
                 continue
-            if b.pos in mark_hexes:
+            live = set()
+            if b.target_mark_idx < len(self.course.marks):
+                live.add(self.course.marks[b.target_mark_idx]["pos"])
+            if 0 < b.target_mark_idx <= len(self.course.marks):
+                live.add(self.course.marks[b.target_mark_idx - 1]["pos"])
+            if b.pos in live:
                 self._issue_protest(b, f"ended the step on a mark at {b.pos}!")
 
     def _print_final_standings(self):

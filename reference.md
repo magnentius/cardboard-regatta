@@ -14,7 +14,7 @@
      (Close-Hauled -> Broad Reach, 5 cards), not the one it will **head**
      (Close-Hauled -> Irons, 1 card).
 2. **Phase 2: Planning Phase**
-   - **Read your Momentum die: that is how many action cards you play** (min 1, max 6).
+   - **Read your Momentum tracker: that is how many action cards you play** (min 1, max 6).
    - Play that many Action Cards face-down, in order.
    - Only 4 `Trim` cards exist, so at Momentum 5-6 you must mix in steering cards.
    - *Wind Shadow*: start the round in another boat's downwind **cone** — 1 hex to
@@ -83,7 +83,8 @@ her spend a card to duck you is a fair exchange, not a foul.*
 ---
 
 ## 🚩 Penalties & Marks
-- **Protest Cards (Max 1 per round)**: You get a Protest card if you violate ROW (cause a collision) OR if you **end** an action step on a mark hex.
+- **Protest Cards (Max 1 per round)**: You get a Protest card if you violate ROW (cause a
+  collision) OR if you **end** an action step on a mark that bounds the leg you are sailing.
 - **Clearing a Protest**: Next Planning Phase you play **2 fewer action slots** (minimum 1),
   then discard the card. You know before you commit cards, so plan the short round.
 - **Never DSQ**: no disqualification exists. The board edge is a wall (movement cancelled,
