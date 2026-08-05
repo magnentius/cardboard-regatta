@@ -137,7 +137,7 @@ To legally complete a race, boats must follow official Sailing Instructions (RRS
   2. **Leg 2 (Downwind)**: Windward Mark ➔ [Leeward Mark](#term-leeward) *(round leaving mark to [Port](#term-port) / Left)*.
   3. **Leg 3 (Upwind Sprint)**: Leeward Mark ➔ Finish Line *(Start Line)*.
 
-#### 📐 Course 3: Triangle (5 Legs — 40–50 Mins)
+#### 📐 Course 3: Triangle (5 Legs — 35–45 Mins)
 *An advanced course testing broad reach speed, gybing maneuvers, and mark rounding strategy.*
 - **[Windward Mark](#term-windward)**: **8 hexes upwind** of the centre of the starting line.
 - **Reach Mark (Wing)**: **6 hexes at 240° (South-West)** from the Windward Mark — which lands it **5 hexes upwind** of the line and **6 hexes to port** of the course axis.
@@ -441,7 +441,7 @@ Real regattas do not wait forever for the back of the fleet, and neither does th
 >
 > | Window | Sprint | Windward-Leeward | Triangle |
 > |:---:|:---:|:---:|:---:|
-> | **20 rounds** | **16 rnds, 2% DNF** | **36 rnds, 9% DNF** | **38 rnds, 12% DNF** |
+> | **20 rounds** | **14 rnds, 1% DNF** | **36 rnds, 10% DNF** | **37 rnds, 11% DNF** |
 > | none | worst case ran past 200 rounds | | |
 
 ---
