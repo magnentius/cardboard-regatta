@@ -315,12 +315,39 @@ All players retrieve their played action cards back into their hand for the next
 > *"To win a regatta, you must first finish the race."* — Sir Peter Blake
 
 ### Wind Shadow
-Every boat blocks the wind behind her. Park yourself upwind of a rival and you take her breeze away.
+Every boat leaves a wake of disturbed air to leeward of her. Park yourself upwind of a rival and you take her breeze away.
 
-- **[Wind Shadow](#term-wind-shadow) Area**: The **2 hexes directly [downwind](#term-leeward)** of any boat — measured along the wind, **independent of the boat's facing angle**. A boat sailing across the wind still casts her shadow straight downwind.
+- **[Wind Shadow](#term-wind-shadow) Area**: A **cone of 4 hexes** spreading [downwind](#term-leeward) of any boat — measured along the wind, **independent of the boat's facing angle**. A boat reaching across the wind still casts her shadow straight downwind.
+  - **1 hex** directly to [leeward](#term-leeward) of her, then
+  - the **3 hexes** across the cone at a range of 2.
+
+  With the wind from the North (Base Wind), a boat on `(0, 0)` blankets `(0, 1)`, `(0, 2)`, `(-1, 2)` and `(1, 1)`:
+
+```
+        wind
+         |||
+         vvv
+        [ B ]              <- the blanketing boat
+       (0, 1)              <- 1 hex to leeward
+  (-1,2)(0,2)(1,1)         <- the cone at range 2
+```
+
+  *Dirty air spreads as it travels, so the further to leeward you are the wider the bad patch. A single-file shadow would be almost impossible to aim.*
+
 - **Planning Phase Effect**: If your boat **starts** the round in another boat's [Wind Shadow](#term-wind-shadow), your **maximum momentum is reduced by 1** for that whole round (minimum max momentum 1). If your Momentum die is already above the reduced cap, **drop it to the cap immediately**.
 - **Why it hurts**: Momentum is your action count, so being blanketed costs you a card — and therefore a hex — for the round, and it caps how far `Trim` can build you back up while you stay covered.
 - **Movement Phase Effect**: Wind shadow is checked **once**, on the positions boats hold at the start of the round. Sailing into a shadow later during the Movement Phase has no effect, and sailing out of one does not give your momentum back.
+
+> [!IMPORTANT]
+> **This is not an "astern" shadow.** The cone is fixed to the **wind**, not to the boat. It only falls behind her when she is sailing upwind; it swings round as her heading changes and as the wind shifts.
+>
+> | She is sailing | Her shadow falls |
+> |---|---|
+> | [Close-Hauled](#term-close-hauled) (beating) | off her leeward quarter — roughly behind her |
+> | [Broad Reach](#term-broad-reach) | out to her leeward side |
+> | [Run](#term-run) (dead downwind) | **directly ahead of her** |
+>
+> That last row is the one that catches people out, and it is true on the water: **running downwind, the boat behind blankets the boat in front.** A leader on a run cannot simply sit on the rhumb line and defend — she has to sail out from under the chaser's cone, which is why downwind legs turn into luffing matches.
 
 > [!NOTE]
 > **Shadow rulings.**
@@ -330,7 +357,14 @@ Every boat blocks the wind behind her. Park yourself upwind of a rival and you t
 > - **A [Puff](#term-puff) does not rescue you.** Resolve the puff first, then the shadow; the blanket wins.
 
 > [!TIP]
-> **Using it offensively.** The hexes you want are the two *directly upwind* of a rival, which on an upwind leg means crossing ahead and settling into her lane. Costing a rival one action a round is worth roughly a hex per round — over a long beat, that is a mark rounding.
+> **Using it offensively — this is the point of the rule.** Suffered passively, a blanket is bad luck that evens out across the fleet. *Placed deliberately*, it is a weapon: get upwind of a rival and she loses an action card every round she stays there.
+>
+> Because the cone widens, you do not need to be exactly on her wind — anywhere in the 3-hex spread at range 2 will do, which makes covering a real option rather than a lucky alignment.
+>
+> - **Beating**: cross ahead and settle into her lane. She must sail out sideways, losing ground, or crawl.
+> - **Running**: you cover her from *behind*. Chasing a leader downwind, line yourself up dead upwind of her and she loses a card a round while you close.
+>
+> Costing a rival one action a round is worth roughly a hex a round. Hold it down a long beat and that is a mark rounding.
 
 ### Rounding Marks
 - **Ending in a Mark Hex**: If you end an Action Step in a hex containing a [mark](#term-mark), you hit the mark and incur a **Protest card**.
@@ -522,5 +556,5 @@ For players new to sailing, here is a quick reference guide to common sailing an
 | <a id="term-pin-mark"></a>**Pin Mark** | The orange buoy marking the left ([Port](#term-port)) end of the starting line. |
 | <a id="term-committee-boat"></a>**Committee Boat** | The official race boat anchored at the right ([Starboard](#term-starboard)) end of the starting line. |
 | <a id="term-ocs"></a>**OCS (On Course Side)** | Crossing the starting line onto the course side before the start gun fires (starting early). |
-| <a id="term-wind-shadow"></a>**Wind Shadow** | The 2-hex blanketed area directly downwind of a boat. Start a round in one and your max momentum drops by 1 for the round — costing you an action card. |
+| <a id="term-wind-shadow"></a>**Wind Shadow** | The 4-hex cone of dirty air spreading downwind of a boat. Start a round in one and your max momentum drops by 1 for the round — costing you an action card. |
 | <a id="term-puff"></a>**Puff** | A gust of extra breeze, rolled on the [Global Wind Shift Table](#2d6-global-wind-shift-table) (a 2 or a 12). Every boat gains **+1 Momentum** that round, raising her point-of-sail cap by 1 — and therefore giving her an extra action card. |

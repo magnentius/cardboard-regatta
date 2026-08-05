@@ -17,10 +17,13 @@
    - **Read your Momentum die: that is how many action cards you play** (min 1, max 6).
    - Play that many Action Cards face-down, in order.
    - Only 4 `Trim` cards exist, so at Momentum 5-6 you must mix in steering cards.
-   - *Wind Shadow*: start the round in the 2 hexes directly downwind of another boat
-     and your **Max Momentum drops by 1** for the whole round (min 1); if you are above
-     the new cap, drop to it now. Costs you an action card. Does not stack, nothing
-     blocks it, checked once at the start of the round only.
+   - *Wind Shadow*: start the round in another boat's downwind **cone** — 1 hex to
+     leeward of her plus the 3 hexes across at range 2 — and your **Max Momentum drops by 1**
+     for the whole round (min 1); if you are above the new cap, drop to it now. Costs
+     you an action card. Does not stack, nothing blocks it, checked once at the start
+     of the round only. *Use it on purpose: park upwind of a rival and cover her.*
+     The cone is fixed to the WIND, not to the boat — running dead downwind it falls
+     **ahead** of her, so downwind the trailing boat blankets the leader.
 3. **Phase 3: Movement Phase**
    - **Initiative**: Determined *once* at the start of the phase. 
      1. Furthest upwind (North). 2. Highest Momentum. 3. Roll 1d6.

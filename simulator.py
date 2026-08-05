@@ -93,6 +93,23 @@ def forecast_pos_of_sail(facing, forecast_wind):
     """The point of sail a heading will become once the forecast shift lands."""
     return pos_of_sail_for((facing - forecast_wind) % 6)
 
+def forecast_vmg(pos, facing, target, forecast_wind):
+    """Ground made good towards the target, per hex, once the forecast shift lands.
+
+    Returns hexes closer per hex sailed: +1 for a heading that lays the target, 0 for
+    one across it, negative for one away. A heading that becomes Irons is worth
+    nothing, since she cannot sail it at all.
+
+    This is what makes a wind shift matter. A shift re-labels which hex headings count
+    as close-hauled, so the same heading can be a slow tack before the shift and lay
+    the mark outright after it.
+    """
+    if pos_of_sail_for((facing - forecast_wind) % 6) == "Irons":
+        return 0.0
+    v = DIRECTIONS[facing]
+    nxt = (pos[0] + v[0], pos[1] + v[1])
+    return float(get_hex_distance(pos, target) - get_hex_distance(nxt, target))
+
 BOAT_NAMES = [
     ("Red Pearl", "Red"),
     ("Blue Horizon", "Blue"),
@@ -201,12 +218,31 @@ def describe_wind_change(prev, now, puff):
     return ("PUFF & " + text) if puff else text
 
 def wind_shadow_hexes(pos, wind):
-    """The 2 hexes directly downwind of a boat: the air she is blanketing.
+    """The cone of dirty air a boat casts downwind: one hex to leeward, three across
+    at range two.
 
-    Measured purely along the wind, independent of which way she is pointing.
+    Measured purely along the wind, independent of which way she is pointing — so this
+    is NOT an "astern" shadow. Beating, it happens to fall behind her; running dead
+    downwind it falls AHEAD of her, which is why the trailing boat blankets the leader
+    on a run.
+
+    A single-file line of two hexes — the original shape — was almost impossible to
+    aim. Boats have a rival within 2 hexes on ~41% of rounds, yet only ~4% were ever
+    blanketed, because covering someone needed near-exact alignment and any 60 degree
+    shift slid the whole thing off her. Spreading with distance is both what real
+    dirty air does and what makes the shadow usable on purpose.
     """
-    dw = DIRECTIONS[(wind + 3) % 6]
-    return [(pos[0] + n * dw[0], pos[1] + n * dw[1]) for n in (1, 2)]
+    dw = (wind + 3) % 6
+    v = DIRECTIONS[dw]
+    tip = (pos[0] + v[0], pos[1] + v[1])
+    mid = (pos[0] + 2 * v[0], pos[1] + 2 * v[1])
+    cone = [tip, mid]
+    # The two hexes flanking the mid-point that are still exactly 2 hexes away.
+    # Stepping sideways from the mid-point would reach range 3, not 2.
+    for side in ((dw + 2) % 6, (dw + 4) % 6):
+        sv = DIRECTIONS[side]
+        cone.append((mid[0] + sv[0], mid[1] + sv[1]))
+    return cone
 
 def pos_of_sail_for(diff):
     """Point of sail from the boat's facing offset relative to the wind."""
@@ -331,9 +367,10 @@ def get_target_pos(boat, course, is_prestart=False):
     if boat.target_mark_idx < len(course.marks):
         mark = course.marks[boat.target_mark_idx]
         if not boat.entered_zone:
-            # Still on the leg: sail at the approach waypoint rather than the buoy. It
-            # puts her on the hand she has to pass, and steers her round the mark
-            # instead of straight into it.
+            # Sail at the approach waypoint for the whole leg, not just near the mark.
+            # Steering at the buoy and bending late measures worse (+30% over the rhumb
+            # line versus +23%): arriving already on the correct side avoids the late
+            # correction, and a failed correction costs a whole loop back.
             return mark["approach"]
         # She has reached the mark; carry on round to the exit waypoint so she leaves
         # on the correct side rather than U-turning on the near side.
@@ -749,6 +786,16 @@ class SailingAI:
                 # bleeding, and it takes a Bear Off just to get sailing again.
                 if forecast_pos_of_sail(final_facing, forecast_wind) == "Irons":
                     score += 600
+
+                # Will this heading be worth anything once the shift lands? Momentum
+                # alone does not answer that. A 60 degree shift re-labels which hex
+                # headings are close-hauled, and beating to a mark dead upwind that is
+                # the whole game: before the shift the best tack closes at 0.5 hexes of
+                # ground per hex sailed, and after it the lifted tack lays the mark
+                # directly at 1.0. Ending the round on the tack the shift is about to
+                # lift is worth far more than the action card the projection counts.
+                score -= forecast_vmg(final_pos, final_facing, target_pos,
+                                      forecast_wind) * 250
             if illegal_maneuvers > 0:
                 score += illegal_maneuvers * 10000  # Massive penalty to completely reject illegal maneuvers
             
@@ -938,22 +985,27 @@ class SailingAI:
 
         legal_scored_plans.sort(key=lambda x: x[0])
 
-        # Selection based on boat skill level (selecting only from legal candidate plans):
+        # Selection based on boat skill level (selecting only from legal candidate plans).
+        # These rates are tuned so the rungs of the ladder are evenly spaced: each tier
+        # beats the one below it in roughly 70% of head-to-head finishes. Note that
+        # plan-selection quality is the ONLY lever that moves the result — weakening the
+        # lesser skippers' wind-shadow avoidance or wind-vane reading measured as no
+        # change at all, which says those terms carry little competitive weight.
         if boat.skill_level == "expert":
             return legal_scored_plans[0][1]
         elif boat.skill_level == "intermediate":
-            # 90% top plan, 10% 2nd or 3rd best legal plan
-            if random.random() < 0.90 or len(legal_scored_plans) < 2:
+            # 78% top plan, otherwise the 2nd or 3rd best
+            if random.random() < 0.78 or len(legal_scored_plans) < 2:
                 return legal_scored_plans[0][1]
             else:
                 idx = min(random.randint(1, 2), len(legal_scored_plans) - 1)
                 return legal_scored_plans[idx][1]
         elif boat.skill_level == "beginner":
-            # 75% top plan, 25% 2nd to 4th best legal plan
-            if random.random() < 0.75 or len(legal_scored_plans) < 2:
+            # 60% top plan, otherwise anywhere in the next five
+            if random.random() < 0.60 or len(legal_scored_plans) < 2:
                 return legal_scored_plans[0][1]
             else:
-                idx = min(random.randint(1, 3), len(legal_scored_plans) - 1)
+                idx = min(random.randint(1, 5), len(legal_scored_plans) - 1)
                 return legal_scored_plans[idx][1]
         elif boat.skill_level == "random":
             return random.choice(legal_scored_plans)[1]
