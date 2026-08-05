@@ -402,7 +402,7 @@ Your cards go down face-first, before anyone moves. Without a way out, a boat wh
 > The discarded slot is gone: that action simply never happens this round.
 
 - **You cannot bail out on your last card of the round.** The payment *is* a remaining face-down card, so if you have none left, you take the contact. Late-round traffic is still genuinely dangerous.
-- **Anyone may bail out**, including a boat with [Right-of-Way](#term-right-of-way) — see Rule 14 below. A ROW boat rarely wants to, since the [Protest](#incurring-a-protest-card) would fall on the other boat anyway.
+- **Anyone may bail out**, including a boat with [Right-of-Way](#term-right-of-way). She rarely wants to, since the [Protest](#incurring-a-protest-card) would fall on the other boat anyway — but the option is hers, and it is what stands in for RRS Rule 14 (see the note under [Right-of-Way](#fouling--right-of-way-row-rules)).
 
 > [!NOTE]
 > **Why you cannot simply swap to a different card.** The [Golden Movement Rule](#phase-3-movement-phase) moves you 1 hex forward *in your current facing* **before** any rotation is applied. So at Momentum 1+ **every card in your deck lands you on exactly the same hex** — a different card changes only which way you point when you get there, never whether you get there. Stopping is the only way to decline.
@@ -410,8 +410,12 @@ Your cards go down face-first, before anyone moves. Without a way out, a boat wh
 > [!TIP]
 > **Is it worth it?** Bailing costs you an action now, a hex of progress, and a point of momentum. Taking the foul costs you **2 action slots next round** plus the Protest card. They are close — which is the point. Ducking should be tempting, not automatic, and a boat who has burned her spare cards has to lie in the bed she planned.
 
-> [!IMPORTANT]
-> **Avoiding Contact (RRS Rule 14):** Having Right-of-Way does **not** give a boat permission to deliberately ram another boat. If a ROW boat could easily avoid contact but intentionally sails into a hex occupied by another boat to force a collision penalty, the ramming boat incurs the **Protest card** for failing to avoid contact.
+> [!NOTE]
+> **Avoiding Contact (RRS Rule 14).** On the water, Rule 14 requires *every* boat to avoid contact if reasonably possible — even one holding right of way — but it also **exonerates** a right-of-way boat unless the contact causes damage. With cardboard boats there is no damage, so in this game the rule would never actually award a penalty.
+>
+> Cardboard Regatta handles it mechanically instead: the **[Bail Out](#-the-bail-out-declining-a-collision)** is Rule 14. Any boat can decline contact by paying a card, right-of-way boat included. Nothing here rests on reading another player's intentions.
+>
+> **So no, holding right of way does not stop a rival putting her boat where you wanted to go.** Forcing her to spend a card to duck you *is* the game — that is a tactical exchange, not foul play. What it cannot do is hand out free penalties: the boat you sail at simply Bails Out, and it costs her one card rather than a Protest.
 
 #### Example Hex Movements & Foul Scenarios
 
@@ -475,7 +479,7 @@ Real regattas do not wait forever for the back of the fleet, and neither does th
 >
 > | Window | Sprint | Windward-Leeward | Triangle |
 > |:---:|:---:|:---:|:---:|
-> | **20 rounds** | **14 rnds, 1% DNF** | **36 rnds, 10% DNF** | **37 rnds, 11% DNF** |
+> | **20 rounds** | **16 rnds, 2% DNF** | **36 rnds, 10% DNF** | **36 rnds, 14% DNF** |
 > | none | worst case ran past 200 rounds | | |
 
 ---
@@ -522,6 +526,9 @@ However, if two or more boats cross the finish line on the **exact same Action S
 If two or more boats are tied in total series points:
 1. **Most High Finishes**: The tie is awarded to the boat with the most 1st-place finishes. If still tied, the boat with the most 2nd-place finishes, and so on.
 2. **Last Race Standings**: If still tied, the tie is broken by whichever tied boat finished higher in the final race of the series.
+
+> [!NOTE]
+> **A discarded race does not count for anything.** Once thrown out, that race is gone — it is not counted towards a boat's total *or* towards the tie-break above. A discarded bullet does not help you win a countback.
 
 ---
 

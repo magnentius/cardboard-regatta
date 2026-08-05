@@ -1001,11 +1001,14 @@ class SailingAI:
                 idx = min(random.randint(1, 2), len(legal_scored_plans) - 1)
                 return legal_scored_plans[idx][1]
         elif boat.skill_level == "beginner":
-            # 60% top plan, otherwise anywhere in the next five
-            if random.random() < 0.60 or len(legal_scored_plans) < 2:
+            # 72% top plan, otherwise anywhere in the next four.
+            # Tuned so she is clearly the slowest without being lost: below about 70%
+            # she stops merely losing and starts falling far enough behind to miss the
+            # Finishing Window, which is a broken-feeling result rather than a weak one.
+            if random.random() < 0.72 or len(legal_scored_plans) < 2:
                 return legal_scored_plans[0][1]
             else:
-                idx = min(random.randint(1, 5), len(legal_scored_plans) - 1)
+                idx = min(random.randint(1, 4), len(legal_scored_plans) - 1)
                 return legal_scored_plans[idx][1]
         elif boat.skill_level == "random":
             return random.choice(legal_scored_plans)[1]

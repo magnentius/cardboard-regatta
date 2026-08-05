@@ -76,6 +76,10 @@ so they all land on the same hex.
 4. **Rule 13 (Tacking):** Tacking boats have NO ROW and must keep clear.
 5. **OCS Boats:** Boats returning to the Pre-Start area after starting early have NO ROW.
 
+*No Rule 14 penalty: the Bail Out is how any boat declines contact, right-of-way boat
+included. Right of way does not stop a rival sitting where you wanted to go — making
+her spend a card to duck you is a fair exchange, not a foul.*
+
 ---
 
 ## 🚩 Penalties & Marks
