@@ -16,7 +16,7 @@
 2. **Phase 2: Planning Phase**
    - **Read your Momentum tracker: that is how many action cards you play** (min 1, max 6).
    - Play that many Action Cards face-down, in order.
-   - Only 4 `Trim` cards exist, so at Momentum 5-6 you must mix in steering cards.
+   - 5 `Trim` cards exist — enough for any slot count except a Momentum 6 round.
    - *Wind Shadow*: start the round in another boat's downwind **cone** — 1 hex to
      leeward of her plus the 3 hexes across at range 2 — and your **Max Momentum drops by 1**
      for the whole round (min 1); if you are above the new cap, drop to it now. Costs
@@ -25,8 +25,10 @@
      The cone is fixed to the WIND, not to the boat — running dead downwind it falls
      **ahead** of her, so downwind the trailing boat blankets the leader.
 3. **Phase 3: Movement Phase**
-   - **Initiative**: Determined *once* at the start of the phase. 
-     1. Furthest upwind (North). 2. Highest Momentum. 3. Roll 1d6.
+   - **Initiative**: re-read every Action Step — *the furthest boat to windward that
+     has not yet moved goes next*. Ties: higher Momentum, then a 1d6 rolled once at the
+     start of the phase and kept all round — you keep your *roll*, not your place. Only unmoved boats are compared, so the order within a step is stable.
+     A wind shift rotates the upwind axis and can swap the order without anyone moving.
    - Resolve Action 1 for all players in Initiative order, then Action 2, etc.
 4. **Phase 4: Cleanup Phase**
    - Retrieve all played cards.
@@ -64,15 +66,20 @@
 ## ⚖️ Right-of-Way (ROW) Rules
 *Fouls only occur when two boats attempt to occupy the **exact same hex**.*
 
-**Bail Out**: if your revealed card would take you into an occupied hex, discard your
+**Bail Out** (boats only — you cannot duck a mark, since stopping does not turn you):
+if your revealed card would take you into an occupied hex, discard your
 last remaining face-down card to stop short — no move, no rotation, Momentum -1, card
 set aside. You cannot do it on your last card of the round. Swapping to a different
 card does NOT help: every card moves you 1 hex forward in your current facing first,
 so they all land on the same hex.
 
 1. **Rule 10 (Starboard vs Port):** **Starboard** tack has ROW over Port tack.
-2. **Rule 11 (Overlapped):** **Leeward** (downwind/South) boat has ROW over Windward boat.
-3. **Rule 12 (Clear Ahead):** **Boat Ahead** has ROW over Boat Behind.
+2. **Rule 11 (Overlapped):** **Leeward** boat has ROW; the **Windward** boat keeps clear.
+3. **Rule 12 (Clear Astern):** the boat **astern** keeps clear of the boat ahead.
+   *Overlap test — check one hex:* boats move 1 hex per step, so a collision is always
+   between neighbours. Of the six neighbouring hexes only the one **dead astern** is
+   "clear astern"; any other adjacent hex is an **overlap**. (Same-tack boats sailing
+   straight never collide — someone has to converge first.)
 4. **Rule 13 (Tacking):** Tacking boats have NO ROW and must keep clear.
 5. **OCS Boats:** Boats returning to the Pre-Start area after starting early have NO ROW.
 
@@ -87,9 +94,11 @@ her spend a card to duck you is a fair exchange, not a foul.*
   collision) OR if you **end** an action step on a mark that bounds the leg you are sailing.
 - **Clearing a Protest**: Next Planning Phase you play **2 fewer action slots** (minimum 1),
   then discard the card. You know before you commit cards, so plan the short round.
-- **Never DSQ**: no disqualification exists. The board edge is a wall (movement cancelled,
-  momentum -> 0); you can never sail off it. Worst possible score is DNF.
-- **Marks**: Passing *through* a mark without ending your step there is safe.
+- **Never DSQ**: no disqualification exists. Worst possible score is DNF.
+- **Board edge**: you cannot sail off it. Stop in the hex nearest the edge, **Momentum -> 0**,
+  and turn to any heading that points back at your mark (not head to wind).
+- **Marks**: **entering** a mark's hex hits it — you move 1 hex per card, so there is no
+  passing *through* a buoy. Only marks bounding your current leg count.
 - **Split Hexes**: Start line split hexes = **Pre-Start**. Finish line split hexes = **Finished**.
 - **Finishing Window**: the race closes **20 rounds after the first boat finishes**. Anyone
   still out is DNF (boats + 1 points — just 1 worse than finishing last).

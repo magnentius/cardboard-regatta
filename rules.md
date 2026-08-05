@@ -76,7 +76,7 @@ Wind direction is set along hex grid axes. The 6 hex directions relative to the 
 2. Set the **starting line length** to the number of boats **+ 2** (e.g. 4 boats ➔ a 6-hex line between the pin and the committee boat), and lay it **square to the wind** — see [Starting Line Layout](#starting-line-layout-laying-a-square-line).
 3. Setup [windward](#term-windward) and [leeward](#term-leeward) [marks](#term-mark) as required by the race course.
 4. Players randomly choose their boats (each boat has a matching maneuver deck). Roll a die to determine the starting player.
-5. The starting player places their boat on any **unoccupied** hex in the pre-start area, at any [point of sail](#term-points-of-sail) and any starting momentum (from Momentum 0 up to that point of sail's maximum). Momentum **2** is a sensible default — enough to manoeuvre without being carried over the line.
+5. The starting player places their boat on any **unoccupied** hex in the pre-start area, facing any [point of sail](#term-points-of-sail) she likes, and sets her Momentum tracker to **2**. *Every boat starts at Momentum 2* — enough to manoeuvre during the countdown without being carried over the line before the gun.
 6. Proceeding clockwise, each subsequent player places their boat on an unoccupied hex. Boats may be placed side by side: the line is only $L$ = boats + 2 hexes long, so there is not room to spread the fleet out, and jostling for the favoured end is part of the pre-start.
 
 ### Starting Line Layout (Laying a Square Line)
@@ -153,7 +153,7 @@ To legally complete a race, boats must follow official Sailing Instructions (RRS
 For introductory games or a fast tabletop session, use these streamlined rules:
 
 1. **Use Course 1 (Beginner Sprint)**: Play **Course 1: Beginner Sprint** (Leg 1 upwind to the Windward Mark 4 hexes North ➔ Leg 2 downwind finish at the Start Line).
-2. **Instant Start**: Skip the 3-turn pre-start countdown sequence. Place all boats in the Pre-Start Area at **Momentum 2 or 3** facing their chosen [point of sail](#term-points-of-sail). The start gun fires immediately on **Round 1**!
+2. **Instant Start**: Skip the 3-turn pre-start countdown sequence. Place all boats in the Pre-Start Area at **Momentum 2**, facing their chosen [point of sail](#term-points-of-sail). The start gun fires immediately on **Round 1**!
 
 ---
 
@@ -249,7 +249,7 @@ Roll **2d6** on the wind shift table:
 
 - Select that many action cards from your maneuver deck and place them face-down in order (Action 1, Action 2, and so on).
 - **Momentum you gain this round pays off next round.** A `Trim` raises your Momentum tracker immediately, but your slot count was already fixed when the round began — so trimming buys you speed for the *following* round. Boats accelerate: Momentum 1 ➔ 2 ➔ 4 ➔ cap.
-- **Your deck is a real limit.** You only own **4 `Trim` cards**. A boat at Momentum 5 or 6 physically cannot fill every slot with `Trim` and must mix in steering cards — going flat out costs you your ability to hold a straight line.
+- **Your deck holds 5 `Trim` cards** — enough to fill every slot at any speed you can realistically reach, so a fast boat can hold her course. Only a boat at Momentum 6 (a [Broad Reach](#term-broad-reach) in a [Puff](#term-puff), the very top of the game) must mix a steering card in.
 - Cards feature [Point of Sail](#term-points-of-sail) icons: **Green** for valid points of sail, **Red** for invalid points of sail.
 
 ##### Actions Summary
@@ -260,7 +260,7 @@ Roll **2d6** on the wind shift table:
 | **[Tack](#term-tack)** | x1 | [Close-Hauled](#term-close-hauled) | Momentum 1+ | Move **1 hex forward**, rotate facing 120° across the wind to opposite tack, reduce Momentum by 1 (min Momentum 0). |
 | **[Gybe](#term-gybe)** | x1 | [Run](#term-run) | Momentum 1+ | Move **1 hex forward**, flip tack ([Port](#term-port)/[Starboard](#term-starboard)). **Facing does not change** — the boom crosses and you stay dead downwind. |
 | **[Luff](#term-luff)** | x2 | [Close-Hauled](#term-close-hauled), [Broad-Reach](#term-broad-reach), or [Irons](#term-irons) | None (Allowed at Momentum 0) | Move **1 hex forward** and reduce Momentum by 1. *(If played at Momentum 0, boat does not move — this and `Bear Off` are the only ways to hold station.)* |
-| **[Trim](#term-trim)** | x4 | Any except [Irons](#term-irons) | None | Move **1 hex forward**, increase Momentum by 1 (up to POS max momentum cap). **Trim moves you even at Momentum 0** — it is how a stopped boat gets going again. |
+| **[Trim](#term-trim)** | x5 | Any except [Irons](#term-irons) | None | Move **1 hex forward**, increase Momentum by 1 (up to POS max momentum cap). **Trim moves you even at Momentum 0** — it is how a stopped boat gets going again. |
 
 > [!NOTE]
 > **Which way do I turn?** From most headings a 60° turn is unambiguous, but two are not — and both resolve **onto the tack you are already on** ([Port](#term-port) or [Starboard](#term-starboard), tracked by your token):
@@ -280,10 +280,31 @@ Roll **2d6** on the wind shift table:
 #### Phase 3: Movement Phase
 
 ##### Initiative
-At the start of the Movement Phase, initiative determines turn order **for the entire phase** (every Action Step). Do not recalculate initiative during the movement phase. Boats do not all act the same number of times — a faster boat is still playing cards in the later Action Steps after slower boats have run out.
-1. The player whose boat is furthest **[upwind](#term-windward)** (closest to the wind source) has **Initiative** and acts first.
-2. If tied for upwind distance, the boat with **higher Momentum** acts first.
-3. If still tied, the tied players roll a **1d6**, with the highest roll acting first.
+Within each Action Step, boats act in order of how far **[upwind](#term-windward)** they are:
+
+> [!IMPORTANT]
+> **The furthest boat to windward that has not yet moved this step goes next.** Work through the fleet that way until every boat has played her card, then start the next Action Step and read the board again.
+
+1. Furthest **[upwind](#term-windward)** (closest to the wind source) acts first.
+2. If two boats are level, the one with **higher Momentum** acts first.
+3. If still level, roll a **1d6** — highest acts first. Roll **once at the start of the Movement Phase** and keep that number in front of you for the whole round: it settles any tie you happen to be in, at any step. You are keeping your *roll*, not your place in the order — the order itself is re-read every Action Step.
+
+- **Read the board fresh each Action Step.** Initiative is not fixed for the phase: a boat who claws out to windward takes the initiative from the boat she passes.
+- You only ever compare boats that **have not yet moved this step**, so they are all still on the hex they started it from. That means the order inside a step cannot reshuffle halfway through — work it out once at the top of the step if you prefer.
+- Boats do not all act the same number of times. A faster boat is still playing cards in the later Action Steps after the slower ones have run out.
+
+> [!TIP]
+> **A wind shift moves the initiative.** "Furthest upwind" is measured along the wind, so when the breeze swings 60° the whole axis swings with it — and boats that have not moved an inch can swap places in the order.
+>
+> Two boats, unchanged on the board: one up and to the left, one up and to the right.
+>
+> | Wind | Left-hand boat | Right-hand boat | Initiative |
+> |---|:---:|:---:|---|
+> | Base (from 0°) | further upwind | — | **left-hand boat** |
+> | Right Shift (from 60°) | — | further upwind | **right-hand boat** |
+> | Left Shift (from 300°) | further upwind | — | **left-hand boat** |
+>
+> Watch the [Forecast Marker](#phase-1-wind--forecast-phase): a shift can hand your rival the first move at the mark.
 
 ##### Point of Sail Momentum Limits
 Each **[Trim](#term-trim)** action increases Momentum by 1 up to the maximum momentum for your current [Point of Sail](#term-points-of-sail). Because **Momentum is your action count**, this table is also the top speed of each point of sail in hexes per round:
@@ -302,7 +323,12 @@ Each **[Trim](#term-trim)** action increases Momentum by 1 up to the maximum mom
 Movement is executed in a series of **Action Steps** (Action 1, Action 2, and so on, up to the highest number of cards any boat played this round):
 1. For each Action Step, all players who still have a card for that step reveal it in Initiative order. A boat with fewer cards than the step number simply sits this step out.
 2. **The Golden Movement Rule**: Whenever your boat has **Momentum 1+**, playing ANY maneuver card moves your boat **1 hex forward** in your current facing direction first before applying rotation or momentum changes. *(At Momentum 0 nothing moves you except [`Trim`](#term-trim), which is how a stopped boat gets going again; `Bear Off` still pivots 60° in place, and `Luff` holds you where you are.)*
-3. **Board Boundaries**: If a boat's forward movement would cause it to move off the physical edge of the game board (outside the course's coordinate bounds), it hits the invisible wall. The boat's movement is canceled for that action step, and its Momentum immediately drops to 0.
+3. **Board Boundaries**: A boat can never leave the playing area. If forward movement would carry her off the edge:
+   - She **does not move** — she stays in the hex nearest the edge.
+   - Her **Momentum drops to 0**. She has run out of water and lost all her way.
+   - She **turns to any heading that points her back towards the [mark](#term-mark) she is rounding** — her choice among those that close the distance. She may not turn head to wind ([Irons](#term-irons)); if the mark lies dead upwind, come round onto the nearer [Close-Hauled](#term-close-hauled) tack.
+
+   *Running out of board costs you everything you had on: momentum 0 means one action slot next round and a slow rebuild. But you are always left pointing back at the course, never stranded facing out to sea.*
 4. **Illegal Actions**: If an action is illegal for the current POS or momentum state, it is discarded without effect. If the boat has forward momentum (Momentum 1+), it coasts forward 1 hex without rotating; if Momentum is 0, the boat remains in place.
 5. **Instant Collision & ROW Resolution**: Collision checks and Right-of-Way evaluations occur **instantly during each Action Step**. If a boat enters a hex occupied by another boat (or both enter the same hex during an Action Step), a collision occurs immediately on that step and ROW rules determine who receives a Protest card.
 
@@ -367,8 +393,12 @@ Every boat leaves a wake of disturbed air to leeward of her. Park yourself upwin
 > Costing a rival one action a round is worth roughly a hex a round. Hold it down a long beat and that is a mark rounding.
 
 ### Rounding Marks
-- **Ending in a Mark Hex**: If you end an Action Step in a hex containing a [mark](#term-mark), you hit the mark and incur a **Protest card**.
-- **Passing Through a Mark**: Boats may safely move *through* a hex containing a mark during an Action Step without penalty, provided they do not end the step in that hex.
+- **Hitting a Mark**: If you **enter** a hex containing a [mark](#term-mark), you hit it and incur a **Protest card**.
+- **There is no sailing "through" a buoy.** Every card moves you exactly **one hex**, so entering a mark's hex and ending your Action Step in it are the same event. If it is in your path, you hit it.
+- **Only the marks on your current leg count** (RRS 31): the [mark](#term-mark) you are rounding now and the one you have just left. A buoy belonging to a leg you are not sailing is scenery — pass straight over it.
+
+> [!TIP]
+> **Marks are the single biggest source of Protests** — about half of all penalties in testing, more than every right-of-way rule put together. A mark does not move and does not shift with the wind, so unlike a rival it is entirely on you. Leave yourself a hex of margin when you plan the rounding, because a [wind shift](#phase-1-wind--forecast-phase) can swing your heading onto it after your cards are down.
 
 ### Fouling & Right-of-Way (ROW) Rules
 
@@ -378,17 +408,39 @@ Every boat leaves a wake of disturbed air to leeward of her. Park yourself upwin
 | RRS Rule | Sailing Rule Name | Tabletop Hex Grid Definition | Right-of-Way (ROW) Priority |
 |---|---|---|---|
 | **Rule 10** | **Starboard vs. Port** | Boats are on **different tacks** (one Port, one Starboard). | **Starboard Tack** has ROW over Port Tack. |
-| **Rule 11** | **Same Tack — Overlapped** | Boats are on the same tack, sailing **side-by-side in adjacent hex columns**. | **Leeward boat** (further downwind / South) has ROW over Windward boat. |
-| **Rule 12** | **Same Tack — Not Overlapped** | Boats are on the same tack, sailing **one behind the other in the same hex line**. | **Boat Ahead** has ROW over the Boat Astern (behind). |
+| **Rule 11** | **Same Tack — Overlapped** | Same tack, and at the start of the step you were **beside** each other — adjacent, but not dead astern. | **Leeward boat** (further [downwind](#term-leeward)) has ROW. The **Windward** boat keeps clear. |
+| **Rule 12** | **Same Tack — Clear Astern** | Same tack, and at the start of the step one boat sat in the hex **directly behind** the other, along her heading. | **Boat Ahead** has ROW. The boat **clear astern** keeps clear. |
 | **Rule 13** | **Tacking** | A boat is executing a **[`Tack`](#term-tack) card**. | **Non-tacking boats** have ROW over a tacking boat. |
 
 #### Detailed Right-of-Way Priorities
 
 1. **Rule 10 (Starboard vs. Port)**: A boat on **[Starboard Tack](#term-starboard)** has [Right-of-Way](#term-right-of-way) over a boat on **[Port Tack](#term-port)**. The Port tack boat must [keep clear](#term-keep-clear).
-2. **Rule 11 (Same Tack — Overlapped / Side-by-Side)**: When on the same tack in adjacent hex columns (side-by-side / overlapped), the **[Leeward](#term-leeward) boat** (further downwind / South) has [Right-of-Way](#term-right-of-way) over the **[Windward](#term-windward) boat** (further upwind / North). The Windward boat must [keep clear](#term-keep-clear).
-3. **Rule 12 (Same Tack — Not Overlapped / Clear Astern)**: When on the same tack in the same hex line (one behind the other), the boat ahead ([clear ahead](#term-clear-ahead)) has [Right-of-Way](#term-right-of-way). The boat coming from behind ([clear astern](#term-clear-ahead)) must [keep clear](#term-keep-clear).
-4. **Rule 13 (Tacking)**: While executing a **[`Tack`](#term-tack)** card, a boat has no [Right-of-Way](#term-right-of-way) and must [keep clear](#term-keep-clear) of all non-tacking boats.
-5. **Returning OCS Boat**: A boat returning to the pre-start side after starting early ([OCS](#term-ocs)) has no [Right-of-Way](#term-right-of-way) and must [keep clear](#term-keep-clear) of all boats that started legally.
+2. **Rule 11 (Same Tack — Overlapped)**: If you were **overlapped**, the [Leeward](#term-leeward) boat has [Right-of-Way](#term-right-of-way) and the [Windward](#term-windward) boat (the one further [upwind](#term-windward) at the start of the step) must [keep clear](#term-keep-clear).
+3. **Rule 12 (Same Tack — Clear Astern)**: If one boat was **clear astern**, she must [keep clear](#term-keep-clear) of the boat ahead.
+4. **Dead level**: If you were overlapped and neither boat was further upwind than the other, the boat who acted **later** in the Action Step keeps clear — she sailed into a hex the other had already taken.
+5. **Rule 13 (Tacking)**: While executing a **[`Tack`](#term-tack)** card, a boat has no [Right-of-Way](#term-right-of-way) and must [keep clear](#term-keep-clear) of all non-tacking boats.
+6. **Returning OCS Boat**: A boat returning to the pre-start side after starting early ([OCS](#term-ocs)) has no [Right-of-Way](#term-right-of-way) and must [keep clear](#term-keep-clear) of all boats that started legally.
+
+> [!IMPORTANT]
+> **Reading an overlap: check one hex.** A boat moves at most **one hex per Action Step**, so any collision is between boats that were already **neighbours** when the step began. That makes the overlap test trivial — of a boat's six neighbouring hexes, exactly **one** is dead astern of her:
+>
+> ```
+>          dead ahead
+>        \     |     /
+>   overlapped   overlapped
+>        /     |     \
+>   overlapped   overlapped
+>              |
+>         CLEAR ASTERN     <- the only hex that is not an overlap
+> ```
+>
+> - She is in the hex **directly behind you**, along the way you were pointing ➔ she is **clear astern** ➔ [Rule 12](#detailed-right-of-way-priorities), she keeps clear.
+> - She is in **any other adjacent hex** ➔ you are **overlapped** ➔ [Rule 11](#detailed-right-of-way-priorities), the windward boat keeps clear.
+>
+> No measuring, no judgement call — look at the boat's heading and check the hex behind her.
+
+> [!TIP]
+> **Boats on the same tack sailing straight never collide.** Two parallel boats simply stay parallel. Somebody has to *converge* — bear off onto a leeward boat, or luff up into a windward one — before any of this matters. That is why Rules 11 and 12 fire far less often than [Rule 10](#detailed-right-of-way-priorities), which catches boats on opposite tacks crossing.
 
 #### 😬 The Bail Out (Declining a Collision)
 Your cards go down face-first, before anyone moves. Without a way out, a boat whose plan happens to cross another's has **no choice** but to hit her — the foul is dealt to you rather than committed by you. The Bail Out is that way out.
@@ -402,6 +454,7 @@ Your cards go down face-first, before anyone moves. Without a way out, a boat wh
 > The discarded slot is gone: that action simply never happens this round.
 
 - **You cannot bail out on your last card of the round.** The payment *is* a remaining face-down card, so if you have none left, you take the contact. Late-round traffic is still genuinely dangerous.
+- **You cannot bail out of a [mark](#term-mark).** Bailing stops you but does not *turn* you. That works against a rival because she moves on and the hex clears — a buoy never does. A boat aimed at a mark would simply bail again next step, burn her spare cards for nothing, and hit it anyway. Steer around it instead.
 - **Anyone may bail out**, including a boat with [Right-of-Way](#term-right-of-way). She rarely wants to, since the [Protest](#incurring-a-protest-card) would fall on the other boat anyway — but the option is hers, and it is what stands in for RRS Rule 14 (see the note under [Right-of-Way](#fouling--right-of-way-row-rules)).
 
 > [!NOTE]
@@ -420,7 +473,7 @@ Your cards go down face-first, before anyone moves. Without a way out, a boat wh
 #### Example Hex Movements & Foul Scenarios
 
 * **Example 1 (Rule 10: Starboard vs. Port Crossing)**: Boat A (Starboard Tack) and Boat B (Port Tack) are converging diagonally toward the same empty hex on an upwind leg. Both boats play [`Trim`](#term-trim) and attempt to enter that hex on the same action step. Because Starboard Tack has Right-of-Way, **Boat B (Port Tack) fouls Boat A and incurs a Protest card**.
-* **Example 2 (Rule 11: Windward vs. Leeward Collisions)**: Boat A (Windward) and Boat B (Leeward) are sailing close-hauled side-by-side in adjacent hex columns. Boat A has initiative and plays [`Bear Off`](#term-bear-off) + [`Trim`](#term-trim), steering down into the hex currently occupied by Boat B. Because the Leeward boat has Right-of-Way, **Boat A (Windward) fouls Boat B and incurs a Protest card**.
+* **Example 2 (Rule 11: Windward vs. Leeward)**: Boat A and Boat B are both close-hauled on starboard, side by side, A one hex to windward of B. **Sailing straight, they never meet** — parallel boats on the same tack simply never share a hex. A must *converge* for anything to happen. She plays [`Bear Off`](#term-bear-off) (moving up her lane and turning 60° down toward B), then [`Trim`](#term-trim), which carries her into the hex B is also entering. Comparing where each started that step, A was further upwind — so **A was the Windward boat, fouls B, and incurs a Protest card**.
 * **Example 3 (Rule 12: Overrunning a Boat Ahead Downwind)**: On a downwind leg (sailing South), Boat A is cruising ahead at Momentum 2. Boat B is trailing directly behind in the same hex line at Momentum 4. Boat B plays [`Trim`](#term-trim) + [`Trim`](#term-trim), overrunning and ramming Boat A from behind. Because a boat coming from behind must keep clear of the boat ahead, **Boat B (Astern) fouls Boat A and incurs a Protest card**.
 * **Example 4 (Rule 13: Tacking into a Collision)**: Boat A (on Starboard Tack) plays a [`Tack`](#term-tack) card, moving forward 1 hex directly into the hex occupied by Boat B and tacking onto Port Tack. Because a tacking boat has no Right-of-Way under RRS Rule 13 while executing a tack, **Boat A (Tacking) fouls Boat B and incurs a Protest card**. *(Note: Tacking into an empty hex 1 space ahead of another boat without colliding is 100% legal!).*
 
@@ -456,7 +509,7 @@ A boat takes a **Protest card** if it:
 ### No Disqualification (Never DSQ)
 - **No Player Elimination**: In *Cardboard Regatta*, boats are **never disqualified** — not for fouls, not for holding Protest cards, not for anything. Every player stays in the race to the finish line.
 - **Repeat offenders**: If a boat fouls again while already holding a Protest card, she simply serves the penalty again next round. There is no escalation, no second-offence rule, and no way to be knocked out.
-- **The Board Edge is a Wall**: A boat can never leave the playing area. If forward movement would carry her off the edge of the board, the movement is **cancelled** for that action step and her **Momentum drops to 0** (see [Board Boundaries](#phase-3-movement-phase)). Being pinned against the edge with no momentum is punishment enough — it costs you all but one of your action slots until you can build speed again.
+- **The Board Edge is a Wall**: A boat can never leave the playing area. She stops in the hex nearest the edge, her **Momentum drops to 0**, and she **comes round onto a heading that points back at her mark** (see [Board Boundaries](#phase-3-movement-phase)). Losing all your way is punishment enough — it costs you all but one of your action slots until you can build speed again — and turning you back towards the course means the edge slows you down rather than trapping you against it.
 
 ---
 

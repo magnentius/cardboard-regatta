@@ -46,9 +46,15 @@ CUBE_DIRECTIONS = {d: (v[0], -v[0] - v[1], v[1]) for d, v in DIRECTIONS.items()}
 MAX_MOMENTUM = {"Irons": 1, "Close-Hauled": 4, "Broad Reach": 5, "Run": 4}
 
 # Maneuver deck composition (rules.md, Actions Summary). Momentum decides how many
-# of these a boat plays in a round, so at momentum 5 or 6 she runs out of Trims and
-# is forced onto steering cards — the deck is a real constraint, not decoration.
-DECK = {"Trim": 4, "Head Up": 2, "Bear Off": 2, "Luff": 2, "Tack": 1, "Gybe": 1}
+# of these a boat plays in a round.
+#
+# There are 5 Trims so that a boat can fill every slot she can realistically earn.
+# With 4, the padding card forced at 5 slots actively punished the speed the Points
+# of Sail table rewards: a Broad Reach boat was pushed off her best point of sail
+# (cap 5 -> 4) and a Close-Hauled boat in a puff went straight into Irons. A 6th
+# Trim would be dead weight — momentum 6 needs a Broad Reach AND a puff, which is
+# under 0.3% of rounds.
+DECK = {"Trim": 5, "Head Up": 2, "Bear Off": 2, "Luff": 2, "Tack": 1, "Gybe": 1}
 
 # Preference order for filling slots that no maneuver was planned for: fastest first.
 FILLERS = ["Trim", "Head Up", "Bear Off", "Luff"]
@@ -267,7 +273,8 @@ def tack_for(facing, wind, held_tack):
         return "Port"
     return held_tack
 
-def apply_card(pos, facing, speed, held_tack, card, wind, bounds, momentum_penalty=0):
+def apply_card(pos, facing, speed, held_tack, card, wind, bounds, momentum_penalty=0,
+               edge_target=None):
     """Pure resolution of a single action card.
 
     Shared by the movement engine and the AI plan rollout so the two can never
@@ -277,6 +284,11 @@ def apply_card(pos, facing, speed, held_tack, card, wind, bounds, momentum_penal
     `momentum_penalty` is subtracted from the point-of-sail momentum cap for boats
     sailing in another boat's wind shadow (floor of 1). It is applied here rather
     than fixed up front because a boat can change point of sail mid-round.
+
+    `edge_target` is the hex she is sailing towards. If she runs into the board edge
+    she stops there with no way on, and swings round to the best heading that points
+    at it — otherwise a boat could be left pinned against the wall pointing out to
+    sea, with one action slot a round and no way to use it.
 
     Returns (pos, facing, speed, held_tack, moved, legal, hit_edge).
     """
@@ -350,6 +362,11 @@ def apply_card(pos, facing, speed, held_tack, card, wind, bounds, momentum_penal
 
     if hit_edge:
         speed = 0
+        if edge_target is not None:
+            # She holds the hex nearest the edge and comes round onto a heading that
+            # points at the mark. get_target_bearing already refuses to leave her head
+            # to wind, picking the nearer close-hauled tack instead.
+            facing = get_target_bearing(pos, edge_target, wind)
 
     return pos, facing, speed, tack_for(facing, wind, held_tack), moved, True, hit_edge
 
@@ -538,11 +555,13 @@ class Boat:
         self.skill_level = skill_level  # "expert", "intermediate", "beginner", "random"
         self.start_berth = start_pos       # her assigned berth on the start line
         self.start_slot = 0                # index of that berth along the line
+        self.initiative_roll = 0.0         # d6 tie-break, rolled once per round
         self.momentum_penalty = 0          # 1 while blanketed in another boat's wind shadow
         self.closest_to_mark = float("inf")   # nearest she has been on this approach
         self.passed_correct_side = False      # reached the mark on the required hand
         self.entered_zone = False             # has she actually reached the mark
         self.step_start_pos = start_pos    # where she began the current action step
+        self.step_start_facing = start_facing  # and which way she was pointing then
 
         self.current_lap = 1
         self.target_mark_idx = 0        # Index into course marks list
@@ -693,7 +712,7 @@ class SailingAI:
 
             curr_pos, curr_facing, curr_speed, curr_tack, _moved, legal, hit_edge = apply_card(
                 curr_pos, curr_facing, curr_speed, curr_tack, card, wind, course.bounds,
-                boat.momentum_penalty)
+                boat.momentum_penalty, edge_target=target_pos)
 
             if not legal:
                 illegal_maneuver_count += 1
@@ -1159,9 +1178,9 @@ class RegattaSimulator:
                 free_slots.remove(slot)
 
             start_facing = 1 if i % 2 == 0 else 5  # Alternate 60° NE and 300° NW
-            # Setup lets a player choose any starting momentum up to her point of
-            # sail's cap. Starting at 0 would mean a 1-slot boat spending the whole
-            # pre-start just getting moving, so take a working 2.
+            # Every boat starts at Momentum 2 (rules.md, Race Setup). Starting at 0
+            # would leave a 1-slot boat spending the entire pre-start just getting
+            # under way.
             boat = Boat(i + 1, name, color, pos, start_facing, 2, skill_level=boat_skill)
             boat.start_slot = slot
             self.boats.append(boat)
@@ -1321,22 +1340,38 @@ class RegattaSimulator:
             self.log(f"📋 {b.name} (momentum {b.speed} -> {b.slots} slots) plans: {plan}")
 
         # Phase 3: Movement Phase (one Action Step per card played)
-        # Static Initiative: Turn order determined once at the start of Phase 4.
-        # Furthest upwind acts first — measured along the wind axis, not the raw
-        # r-coordinate, which only tracks "upwind" while the wind is due North.
-        initiative_order = [b for b in self.boats if not b.finished]
-        initiative_order.sort(key=lambda x: (-get_upwind_rank(x.pos, self.global_wind), -x.speed, random.random()))
-        self._initiative_index = {b.boat_id: i for i, b in enumerate(initiative_order)}
-        
+        # Initiative is re-read at the start of every Action Step: the furthest boat
+        # to windward that has not yet moved goes next. Freezing the order for the
+        # whole phase made the rule untrue almost immediately — measured over 7,741
+        # steps, a frozen order differed from the live one 50.8% of the time, and put
+        # the wrong boat first in 19%.
+        #
+        # Only boats that have NOT moved this step are ever compared, so they are all
+        # still on their step-start hexes. That makes "furthest upwind not yet moved"
+        # exactly equivalent to sorting once at the head of the step, with no way for
+        # a mid-step move to reshuffle the running order.
+        racing = [b for b in self.boats if not b.finished]
+        # The d6 tie-break is rolled once and held for the round. The ORDER is still
+        # re-read every step — what persists is each boat's roll, so whichever pair of
+        # boats ends up level settles it the same way all round.
+        for b in racing:
+            b.initiative_roll = random.random()
+
         # Boats no longer all act the same number of times: a faster boat keeps
         # sailing in the later steps after slower boats have run out of cards.
-        total_steps = max((len(plans[b.boat_id]) for b in initiative_order), default=0)
+        total_steps = max((len(plans[b.boat_id]) for b in racing), default=0)
 
         for step in range(total_steps):
             self.log(f"\n --- Action Step {step + 1} ---")
 
-            active_boats = [b for b in initiative_order
+            # Re-read initiative from the board, on the positions boats hold now.
+            # The upwind axis follows the current wind, so a shift between rounds
+            # rotates it — and hands initiative to a different boat.
+            active_boats = [b for b in racing
                             if not b.finished and step < len(plans[b.boat_id])]
+            active_boats.sort(key=lambda x: (-get_upwind_rank(x.pos, self.global_wind),
+                                             -x.speed, x.initiative_roll))
+            self._initiative_index = {b.boat_id: i for i, b in enumerate(active_boats)}
 
             for b in active_boats:
                 card = plans[b.boat_id][step]
@@ -1345,6 +1380,7 @@ class RegattaSimulator:
                 card, bailed = self._maybe_bail_out(b, plans[b.boat_id], step, card)
                 b.current_card = card
                 b.step_start_pos = b.pos
+                b.step_start_facing = b.facing
                 prev_pos = b.pos
 
                 if bailed:
@@ -1356,7 +1392,8 @@ class RegattaSimulator:
 
                 new_pos, new_facing, new_speed, new_tack, moved, legal, hit_edge = apply_card(
                     b.pos, b.facing, b.speed, b._held_tack, card, self.global_wind,
-                    self.course.bounds, b.momentum_penalty)
+                    self.course.bounds, b.momentum_penalty,
+                    edge_target=get_target_pos(b, self.course))
 
                 b.pos, b.facing, b.speed, b._held_tack = new_pos, new_facing, new_speed, new_tack
                 b.tack_side = new_tack
@@ -1506,15 +1543,22 @@ class RegattaSimulator:
             return card, False
 
         landing = self._card_lands_on(boat, card)
-        blocker = next((o for o in self.boats
-                        if o is not boat and not o.finished and o.pos == landing), None)
-        if blocker is None:
-            return card, False
 
         # A boat holding right of way has no reason to pay: the other boat carries the
-        # Protest. She only ducks when the foul would be hers.
-        if not self._would_be_give_way(boat, blocker, landing, card):
+        # Protest. She only ducks a rival when the foul would be hers.
+        blocker = next((o for o in self.boats
+                        if o is not boat and not o.finished and o.pos == landing), None)
+        duck_boat = blocker is not None and self._would_be_give_way(boat, blocker, landing, card)
+
+        # A mark cannot be ducked, and the reason is worth recording: bailing stops a
+        # boat but does not turn her. Against a rival that works, because SHE moves and
+        # the hex clears. A buoy never moves. A boat aimed at one just bails again next
+        # step, burning her spare cards for nothing and hitting it anyway once she has
+        # none left — measured, that cost 17.6 bail-outs a race on the Triangle to
+        # avoid 0.1 mark hits per boat, and pushed DNF from 13% to 22%.
+        if not duck_boat:
             return card, False
+        hazard = blocker.name
 
         payable = [i for i in range(step + 1, len(plan)) if plan[i] is not None]
         if not payable:
@@ -1525,9 +1569,30 @@ class RegattaSimulator:
         slot = random.choice(payable) if self.bail_out == "random" else payable[-1]
         plan[slot] = None
         self.metrics["bail_outs"] += 1
-        self.log(f"😬 {boat.name} BAILS OUT — spills wind short of {blocker.name} at {landing}, "
+        self.log(f"😬 {boat.name} BAILS OUT — spills wind short of {hazard} at {landing}, "
                  f"setting aside {card} and discarding her Action {slot + 1} card.")
         return card, True
+
+    def _live_marks(self, boat):
+        """The marks that bound the leg this boat is sailing (RRS 31): the one she is
+        rounding now and the one she has just left. Only these can be hit."""
+        live = set()
+        if boat.target_mark_idx < len(self.course.marks):
+            live.add(self.course.marks[boat.target_mark_idx]["pos"])
+        if 0 < boat.target_mark_idx <= len(self.course.marks):
+            live.add(self.course.marks[boat.target_mark_idx - 1]["pos"])
+        return live
+
+    def _clear_astern(self, ahead, astern, p_ahead, p_astern):
+        """Was `astern` sitting in the hex directly behind `ahead`, along her heading?
+
+        That is the whole overlap test on a hex grid. Boats move one hex per step, so
+        a collision always involves boats that were neighbours — and only one of the
+        six neighbouring hexes is dead astern. Anything else adjacent is an overlap,
+        which is what Rule 11 governs.
+        """
+        v = DIRECTIONS[(getattr(ahead, "step_start_facing", ahead.facing) + 3) % 6]
+        return p_astern == (p_ahead[0] + v[0], p_ahead[1] + v[1])
 
     def _adjudicate(self, b1, b2, hex_pos):
         """Decides which of two boats sharing a hex must keep clear.
@@ -1564,10 +1629,14 @@ class RegattaSimulator:
         p1 = getattr(b1, "step_start_pos", b1.pos)
         p2 = getattr(b2, "step_start_pos", b2.pos)
 
-        # Rule 12: one boat held the hex and the other sailed into her.
-        if p1 == hex_pos and p2 != hex_pos:
+        # Rule 12: was one boat sitting DEAD ASTERN of the other at the start of the
+        # step? A boat can only move one hex, so any collision involves boats that
+        # were already neighbours — and of the six neighbouring hexes exactly one is
+        # dead astern. That single check is the whole overlap test: astern means clear
+        # astern, anywhere else adjacent means overlapped.
+        if self._clear_astern(b1, b2, p1, p2):
             return b2, b1, "Rule 12 (Clear Astern)"
-        if p2 == hex_pos and p1 != hex_pos:
+        if self._clear_astern(b2, b1, p2, p1):
             return b1, b2, "Rule 12 (Clear Astern)"
 
         # Rule 11: converging from different hexes — the windward boat keeps clear.
@@ -1628,12 +1697,7 @@ class RegattaSimulator:
         for b in self.boats:
             if b.finished:
                 continue
-            live = set()
-            if b.target_mark_idx < len(self.course.marks):
-                live.add(self.course.marks[b.target_mark_idx]["pos"])
-            if 0 < b.target_mark_idx <= len(self.course.marks):
-                live.add(self.course.marks[b.target_mark_idx - 1]["pos"])
-            if b.pos in live:
+            if b.pos in self._live_marks(b):
                 self._issue_protest(b, f"ended the step on a mark at {b.pos}!")
 
     def _print_final_standings(self):
