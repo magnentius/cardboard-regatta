@@ -133,6 +133,21 @@ def get_hex_distance(p1, p2):
     dr = p1[1] - p2[1]
     return (abs(dq) + abs(dr) + abs(dq + dr)) // 2
 
+# The physical board (rules.md, Components): 21 columns wide by 29 rows tall, with the
+# starting line running across the middle. That is a RECTANGLE on the table, which is not
+# a constant-r box in axial coordinates — adjacent columns stagger half a hex, so a fixed
+# r-range shears into a parallelogram and gives the corners of the board away.
+#
+# `line_rank` is precisely the visual row (rank 0 is the line, +1 is one hex upwind), so
+# the honest test is a column range plus a rank range.
+BOARD_COLUMNS = 21          # 10 either side of the centre of the line
+BOARD_ROWS = 29             # 14 rows upwind of the line, 14 downwind
+
+def in_bounds(pos, bounds):
+    """Is this hex on the board? Columns AND rows, the way a player sees them."""
+    return (bounds["q_min"] <= pos[0] <= bounds["q_max"]
+            and bounds["rank_min"] <= line_rank(pos) <= bounds["rank_max"])
+
 def get_upwind_rank(pos, wind):
     """Signed projection of a hex onto the wind axis. Higher = further upwind
     (closer to the wind source). Correct for all 6 wind headings, unlike a raw
@@ -261,16 +276,26 @@ def pos_of_sail_for(diff):
     return "Run"
 
 def tack_for(facing, wind, held_tack):
-    """Tack is geometric: the wind crosses the starboard side at 60°/120° off the
-    wind and the port side at 240°/300°. Dead upwind (Irons) and dead downwind (Run)
-    are ambiguous, so the boat holds the tack she was last unambiguously on
-    (rules.md, 'Tack State in Irons'). Deriving this every time means a wind shift
-    correctly changes which tack a boat is on without her playing a card."""
+    """Tack is geometric: which side of the boat the wind crosses.
+
+    With the wind from the North, a boat heading 60° (NE) has her starboard side facing
+    SE and her port side facing NW — so the northerly strikes her PORT side and she is on
+    port tack. Turned around: close-hauled on starboard tack in a northerly means heading
+    NW, which is the standard picture on the water.
+
+    So 60°/120° off the wind is PORT tack and 240°/300° is STARBOARD. (These were
+    inverted here and in rules.md; the geometry was always right, only the label was
+    wrong, but it reversed every Rule 10 crossing relative to a sailor's instinct.)
+
+    Dead upwind (Irons) and dead downwind (Run) are ambiguous, so the boat holds the tack
+    she was last unambiguously on (rules.md, 'Tack State in Irons'). Deriving this every
+    time means a wind shift correctly changes which tack a boat is on without her playing
+    a card."""
     diff = (facing - wind) % 6
     if diff in (1, 2):
-        return "Starboard"
-    if diff in (4, 5):
         return "Port"
+    if diff in (4, 5):
+        return "Starboard"
     return held_tack
 
 def apply_card(pos, facing, speed, held_tack, card, wind, bounds, momentum_penalty=0,
@@ -320,7 +345,7 @@ def apply_card(pos, facing, speed, held_tack, card, wind, bounds, momentum_penal
     if speed >= 1 or card == "Trim":
         vec = DIRECTIONS[facing]
         nxt = (pos[0] + vec[0], pos[1] + vec[1])
-        if bounds["q_min"] <= nxt[0] <= bounds["q_max"] and bounds["r_min"] <= nxt[1] <= bounds["r_max"]:
+        if in_bounds(nxt, bounds):
             pos = nxt
             moved = True
         else:
@@ -339,8 +364,9 @@ def apply_card(pos, facing, speed, held_tack, card, wind, bounds, momentum_penal
             facing = (facing + 1) % 6
         elif diff == 3:
             # Heading up from dead downwind is ambiguous on the hex grid; she comes
-            # up onto the tack she was already sailing.
-            facing = (facing - 1) % 6 if held_tack == "Starboard" else (facing + 1) % 6
+            # up onto the tack she was already sailing. Starboard is 240°/300° off the
+            # wind, so from a Run she heads up the +1 way.
+            facing = (facing + 1) % 6 if held_tack == "Starboard" else (facing - 1) % 6
     elif card == "Bear Off":
         if diff in (1, 2):
             facing = (facing + 1) % 6
@@ -348,7 +374,7 @@ def apply_card(pos, facing, speed, held_tack, card, wind, bounds, momentum_penal
             facing = (facing - 1) % 6
         elif diff == 0:
             # Bearing away out of Irons, likewise onto the tack she was already on.
-            facing = (facing + 1) % 6 if held_tack == "Starboard" else (facing - 1) % 6
+            facing = (facing - 1) % 6 if held_tack == "Starboard" else (facing + 1) % 6
     elif card == "Tack":
         facing = (facing + 2) % 6 if diff == 5 else (facing - 2) % 6
         speed = max(0, speed - 1)
@@ -503,11 +529,24 @@ class CourseConfig:
             m["exit"] = (m["pos"][0] + 2 * xv[0], m["pos"][1] + 2 * xv[1])
             prev = m["pos"]
 
-        margin = data.get("board_margin", 8)
-        qs = [self.pin_mark[0], self.committee_boat[0]] + [m["pos"][0] for m in self.marks]
-        rs = [self.pin_mark[1], self.committee_boat[1]] + [m["pos"][1] for m in self.marks]
-        self.bounds = {"q_min": min(qs) - margin, "q_max": max(qs) + margin,
-                       "r_min": min(rs) - margin, "r_max": max(rs) + margin}
+        # One fixed board holds every course (rules.md, "Room to sail"): 21 columns by 29
+        # rows, centred on the middle of the line. The fleet size changes the LENGTH of the
+        # line, not the size of the water — eight boats race the same board as two, with
+        # less of it to themselves.
+        centre_q = self.line_centre()[0]
+        half_w = (BOARD_COLUMNS - 1) // 2
+        half_h = (BOARD_ROWS - 1) // 2
+        self.bounds = {"q_min": centre_q - half_w, "q_max": centre_q + half_w,
+                       "rank_min": -half_h, "rank_max": half_h}
+
+        # Every mark must fit, with room to sail round it. This is a rules invariant, not
+        # a preference: a course that overflows the board would trap boats against a wall.
+        for m in self.marks:
+            if not in_bounds(m["pos"], self.bounds):
+                raise ValueError(
+                    f"Course '{self.name}' does not fit the {BOARD_COLUMNS}x{BOARD_ROWS} "
+                    f"board: {m['name']} at {m['pos']} is off the edge with "
+                    f"{num_boats} boats.")
 
     def along_line(self, n):
         """The hex `n` steps along the start line from the committee boat.
@@ -684,14 +723,19 @@ class SailingAI:
         return plans
 
     @staticmethod
-    def _simulate_plan(plan, boat, wind, course, is_prestart=False):
+    def _simulate_plan(plan, boat, wind, course, is_prestart=False, live_marks=frozenset()):
         # Dirty air caps how far Trim can build momentum for the whole round.
         """Rolls a 4-card plan forward one round through the shared physics in
         apply_card, so the AI evaluates plans against exactly the maneuvers the
         engine will execute.
 
+        `live_marks` are the mark hexes that would earn this boat a Protest if she
+        entered one. They are counted along the whole path, not just at the end: every
+        card moves exactly one hex, so a mark in the middle of a plan is hit just as
+        surely as one at the end, and it cannot be ducked with a Bail Out.
+
         Returns (pos, facing, speed, min_dist_to_target, irons_count, mark_rounded,
-        illegal_maneuver_count).
+        illegal_maneuver_count, mark_hits).
         """
         target_pos = get_target_pos(boat, course, is_prestart)
 
@@ -704,6 +748,7 @@ class SailingAI:
         irons_count = 0
         illegal_maneuver_count = 0
         mark_rounded = False
+        mark_hits = 0
         target_idx = boat.target_mark_idx
 
         for card in plan:
@@ -719,6 +764,9 @@ class SailingAI:
             if hit_edge:
                 illegal_maneuver_count += 1
 
+            if curr_pos in live_marks:
+                mark_hits += 1
+
             dist = get_hex_distance(curr_pos, target_pos)
             if dist < min_dist:
                 min_dist = dist
@@ -726,11 +774,13 @@ class SailingAI:
                 if get_hex_distance(curr_pos, course.marks[target_idx]["pos"]) <= 1:
                     mark_rounded = True
 
-        return curr_pos, curr_facing, curr_speed, min_dist, irons_count, mark_rounded, illegal_maneuver_count
+        return (curr_pos, curr_facing, curr_speed, min_dist, irons_count, mark_rounded,
+                illegal_maneuver_count, mark_hits)
 
     @staticmethod
     def plan_round_actions(boat, other_boats, wind, course, slots=4, forecast_wind=None,
-                           is_prestart=False, prestart_turns_left=0, forecast_puff=False):
+                           is_prestart=False, prestart_turns_left=0, forecast_puff=False,
+                           live_marks=frozenset()):
         """
         Evaluates candidate action plans for the round and selects the best sequence.
         If is_prestart is True, Expert and Intermediate AI execute a Dip-Start strategy
@@ -783,8 +833,9 @@ class SailingAI:
         scored_plans = []
 
         for plan in filtered_plans:
-            final_pos, final_facing, final_speed, min_dist, irons_count, mark_rounded, illegal_maneuvers = \
-                SailingAI._simulate_plan(plan, boat, eval_wind, course, is_prestart)
+            final_pos, final_facing, final_speed, min_dist, irons_count, mark_rounded, \
+                illegal_maneuvers, mark_hits = \
+                SailingAI._simulate_plan(plan, boat, eval_wind, course, is_prestart, live_marks)
 
             desired_dir = get_target_bearing(final_pos, target_pos, eval_wind)
             dir_diff = min((final_facing - desired_dir) % 6, (desired_dir - final_facing) % 6)
@@ -915,6 +966,13 @@ class SailingAI:
 
             if irons_count > 0:
                 score += irons_count * 1500  # Heavy penalty to completely eliminate plans that enter Irons
+            if mark_hits > 0:
+                # Marks are the single largest source of Protests, and unlike a rival a
+                # buoy cannot be ducked with a Bail Out — it never moves out of the way.
+                # A skipper plans AROUND a mark; she does not discover it at reveal. The
+                # cost of a Protest is 2 action slots next round, so this is priced above
+                # anything a single round of progress can be worth.
+                score += mark_hits * 2000
             if mark_rounded:
                 score -= 1000
 
@@ -1252,6 +1310,10 @@ class RegattaSimulator:
         self._print_final_standings()
 
     def _execute_round(self, round_num, is_prestart=False, prestart_turns_left=0):
+        # The line marks are live during the pre-start (rules.md, "The line marks count
+        # too"), which _live_marks needs to know.
+        self._is_prestart = is_prestart
+
         # Phase 1: Wind & Forecast Phase
         puff_active = False
         if not is_prestart:
@@ -1334,7 +1396,8 @@ class RegattaSimulator:
                                                 slots=b.slots, forecast_wind=forecast_to_pass,
                                                 is_prestart=is_prestart,
                                                 prestart_turns_left=prestart_turns_left,
-                                                forecast_puff=puff_to_pass)
+                                                forecast_puff=puff_to_pass,
+                                                live_marks=frozenset(self._live_marks(b)))
 
             plans[b.boat_id] = plan
             self.log(f"📋 {b.name} (momentum {b.speed} -> {b.slots} slots) plans: {plan}")
@@ -1575,12 +1638,30 @@ class RegattaSimulator:
 
     def _live_marks(self, boat):
         """The marks that bound the leg this boat is sailing (RRS 31): the one she is
-        rounding now and the one she has just left. Only these can be hit."""
+        rounding now and the one she has just left. Only these can be hit.
+
+        The Committee Boat and Pin bound the starting leg and the finishing leg, so they
+        are live during the **pre-start, Leg 1, and the final leg** and are scenery the
+        rest of the time (rules.md, "The line marks count too"). That is what makes
+        barging at the boat end a real risk rather than a free squeeze — a windward boat
+        has the leeward boat's right of way on one side and a buoy that will not move on
+        the other.
+
+        On a multi-lap race only the FIRST lap's Leg 1 and the LAST lap's final leg touch
+        the line; the line is not a boundary of lap 2's first leg.
+        """
+        n = len(self.course.marks)
         live = set()
-        if boat.target_mark_idx < len(self.course.marks):
+        if boat.target_mark_idx < n:
             live.add(self.course.marks[boat.target_mark_idx]["pos"])
-        if 0 < boat.target_mark_idx <= len(self.course.marks):
+        if 0 < boat.target_mark_idx <= n:
             live.add(self.course.marks[boat.target_mark_idx - 1]["pos"])
+
+        on_starting_leg = boat.current_lap == 1 and boat.target_mark_idx == 0
+        on_finishing_leg = boat.target_mark_idx >= n and boat.current_lap == self.total_laps
+        if getattr(self, "_is_prestart", False) or on_starting_leg or on_finishing_leg:
+            live.add(self.course.committee_boat)
+            live.add(self.course.pin_mark)
         return live
 
     def _clear_astern(self, ahead, astern, p_ahead, p_astern):
