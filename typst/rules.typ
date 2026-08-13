@@ -2,7 +2,8 @@
 //
 // THIS FILE IS THE RULES. There is no markdown copy; it was converted once by
 // tools/md2typst.py (kept as a historical record) and deleted, so that the book
-// cannot drift from itself the way rules.md and reference.md once did.
+// cannot drift from itself the way rules.md and reference.md once did — the
+// Quick Reference is now an appendix compiled from the same source.
 //
 // The 238 cross-references below are Typst labels, which means the compiler
 // checks them: a link to a section or glossary term that no longer exists is a
@@ -13,6 +14,7 @@
 //     typst/rules.typ rules.pdf
 
 #import "lib/rulebook.typ": *
+#import "lib/quick-reference.typ": quick-ref, quick-reference
 
 #show: rulebook.with(theme: sys.inputs.at("theme", default: "print"))
 
@@ -104,7 +106,7 @@ Next round the shift lands and *both boats are on Broad Reach* — the fastest p
 
 == Now Go Race <x-now-go-race>
 
-Sail Course 1. When a question comes up, the #link("https://github.com/magnentius/cardboard-regatta/blob/main/reference.md")[Quick Reference] answers most of them on one page. After your first race, read on from #link(label("x-components-core-concepts"))[Components] — and if you already sail, start with #link(label("x-for-sailors-what-translated-and-how"))[For Sailors].
+Sail Course 1. When a question comes up, the #link(label("x-appendix-quick-reference"))[Quick Reference] answers most of them on one page. After your first race, read on from #link(label("x-components-core-concepts"))[Components] — and if you already sail, start with #link(label("x-for-sailors-what-translated-and-how"))[For Sailors].
 
 = Components & Core Concepts <x-components-core-concepts>
 
@@ -1208,4 +1210,16 @@ For players new to sailing, here is a quick reference guide to common sailing an
   [#anchor("x-term-puff")*Puff*], [A gust of extra breeze, rolled on the #link(label("x-2d6-global-wind-shift-table"))[Global Wind Shift Table] (a 2 or a 12). Every boat *except one in #link(label("x-term-irons"))[Irons]* gains *+1 Momentum* and a cap 1 higher, for *that round only* — an extra action card. It needs no expiry rule: next round the cap returns to normal and #link(label("x-phase-1-wind-forecast-phase"))[Settle] takes the point back.],
 )
 
+= Appendix: Quick Reference <x-appendix-quick-reference>
 
+#aside[
+Every line here is stated elsewhere in the book, gathered in the order you need
+it at the table with the reasoning left behind. Two pages: print it double-sided.
+]
+
+// The card is tuned to two pages so it prints as one double-sided sheet. This
+// records where it starts so CI can check that it still does; without it, a
+// later edit spills onto a third page and nobody notices until they print it.
+#context [#metadata(here().page())<appendix-start-page>]
+
+#quick-ref(quick-reference)

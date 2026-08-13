@@ -38,12 +38,13 @@ Whether you're a seasoned sailor or a tabletop strategist, **Cardboard Regatta**
 
 ## 📖 Rulebook
 
-Ready to set sail? **[Download the rulebook PDF](../../releases)** — or keep the one-page
-**[Quick Reference](reference.md)** beside you at the table.
+Ready to set sail? **[Download the rulebook PDF](../../releases)**. The last two pages are
+a **Quick Reference** card — print them double-sided and keep them beside the board.
 
 The rulebook is written in [Typst](https://typst.app). Its source is
-**[`typst/rules.typ`](typst/rules.typ)**, which is the single authority on the rules:
-there is no markdown copy to fall out of step with it.
+**[`typst/rules.typ`](typst/rules.typ)**, with the reference card in
+[`typst/lib/quick-reference.typ`](typst/lib/quick-reference.typ). Together they are the
+single authority on the rules: there is no markdown copy to fall out of step with them.
 
 ### The PDF
 

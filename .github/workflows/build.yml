@@ -82,6 +82,22 @@ jobs:
             echo "::error::only $pages pages — the book should be 30-plus"
             exit 1
           fi
+          echo "total_pages=$pages" >> "$GITHUB_ENV"
+
+      # The Quick Reference is a card: you print it double-sided and keep it
+      # beside the board. Its type is tuned to fit exactly two pages, so a
+      # third page means the tuning has been lost, not that the card grew.
+      - name: The Quick Reference must still fit one double-sided sheet
+        run: |
+          set -euo pipefail
+          start="$(typst eval 'query(<appendix-start-page>).first().value' \
+            --in typst/rules.typ --root . --font-path typst/fonts --ignore-system-fonts)"
+          span="$(( total_pages - start + 1 ))"
+          echo "appendix starts on page $start of $total_pages — $span pages"
+          if [ "$span" -ne 2 ]; then
+            echo "::error::the Quick Reference spans $span pages, not 2 — retune typst/lib/quick-reference.typ"
+            exit 1
+          fi
 
       - uses: actions/upload-artifact@v4
         with:
