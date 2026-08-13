@@ -38,7 +38,40 @@ Whether you're a seasoned sailor or a tabletop strategist, **Cardboard Regatta**
 
 ## 📖 Rulebook
 
-Ready to set sail? Read the complete official rulebook in **[rules.md](rules.md)**.
+Ready to set sail? **[Download the rulebook PDF](../../releases)** — or keep the one-page
+**[Quick Reference](reference.md)** beside you at the table.
+
+The rulebook is written in [Typst](https://typst.app). Its source is
+**[`typst/rules.typ`](typst/rules.typ)**, which is the single authority on the rules:
+there is no markdown copy to fall out of step with it.
+
+### The PDF
+
+Published on the [Releases page](../../releases) in two versions, built from the same source:
+
+| | For |
+| :--- | :--- |
+| `cardboard-regatta-rulebook-<edition>.pdf` | **Printing** — navy on white |
+| `cardboard-regatta-rulebook-screen-<edition>.pdf` | **Reading on a screen** — light on navy |
+
+Every page carries its edition date in the footer, so you can tell at a glance whether the
+copy in your hands matches the one on the table.
+
+To build it yourself you need [Typst](https://github.com/typst/typst) 0.15 or later. Fonts
+are vendored in `typst/fonts`, and the build ignores system fonts so it produces the same
+document everywhere:
+
+```bash
+typst compile --root . --font-path typst/fonts --ignore-system-fonts \
+  typst/rules.typ rules.pdf
+
+# ...and the screen version
+typst compile --root . --font-path typst/fonts --ignore-system-fonts \
+  --input theme=screen typst/rules.typ rules-screen.pdf
+```
+
+The geometry diagrams in `images/` are generated — edit `tools/gen_diagrams.py` and
+re-run it rather than editing the SVGs by hand, which CI checks.
 
 ---
 

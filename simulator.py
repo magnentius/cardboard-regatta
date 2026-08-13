@@ -45,7 +45,7 @@ CUBE_DIRECTIONS = {d: (v[0], -v[0] - v[1], v[1]) for d, v in DIRECTIONS.items()}
 
 MAX_MOMENTUM = {"Irons": 1, "Close-Hauled": 4, "Broad Reach": 5, "Run": 4}
 
-# Maneuver deck composition (rules.md, Actions Summary). Momentum decides how many
+# Maneuver deck composition (the rulebook, Actions Summary). Momentum decides how many
 # of these a boat plays in a round.
 #
 # There are 5 Trims so that a boat can fill every slot she can realistically earn.
@@ -133,7 +133,7 @@ def get_hex_distance(p1, p2):
     dr = p1[1] - p2[1]
     return (abs(dq) + abs(dr) + abs(dq + dr)) // 2
 
-# The physical board (rules.md, Components): 21 columns wide by 29 rows tall, with the
+# The physical board (the rulebook, Components): 21 columns wide by 29 rows tall, with the
 # starting line running across the middle. That is a RECTANGLE on the table, which is not
 # a constant-r box in axial coordinates — adjacent columns stagger half a hex, so a fixed
 # r-range shears into a parallelogram and gives the corners of the board away.
@@ -284,11 +284,11 @@ def tack_for(facing, wind, held_tack):
     NW, which is the standard picture on the water.
 
     So 60°/120° off the wind is PORT tack and 240°/300° is STARBOARD. (These were
-    inverted here and in rules.md; the geometry was always right, only the label was
+    inverted here and in the rulebook; the geometry was always right, only the label was
     wrong, but it reversed every Rule 10 crossing relative to a sailor's instinct.)
 
     Dead upwind (Irons) and dead downwind (Run) are ambiguous, so the boat holds the tack
-    she was last unambiguously on (rules.md, 'Tack State in Irons'). Deriving this every
+    she was last unambiguously on (the rulebook, 'Tack State in Irons'). Deriving this every
     time means a wind shift correctly changes which tack a boat is on without her playing
     a card."""
     diff = (facing - wind) % 6
@@ -379,7 +379,7 @@ def apply_card(pos, facing, speed, held_tack, card, wind, bounds, momentum_penal
         facing = (facing + 2) % 6 if diff == 5 else (facing - 2) % 6
         speed = max(0, speed - 1)
     elif card == "Gybe":
-        # rules.md gives Gybe no rotation, only "flip tack downwind" (contrast Tack,
+        # the rulebook gives Gybe no rotation, only "flip tack downwind" (contrast Tack,
         # which explicitly rotates 120°). She stays dead downwind and the boom
         # crosses, so only the tack changes.
         held_tack = "Port" if held_tack == "Starboard" else "Starboard"
@@ -529,7 +529,7 @@ class CourseConfig:
             m["exit"] = (m["pos"][0] + 2 * xv[0], m["pos"][1] + 2 * xv[1])
             prev = m["pos"]
 
-        # One fixed board holds every course (rules.md, "Room to sail"): 21 columns by 29
+        # One fixed board holds every course (the rulebook, "Room to sail"): 21 columns by 29
         # rows, centred on the middle of the line. The fleet size changes the LENGTH of the
         # line, not the size of the water — eight boats race the same board as two, with
         # less of it to themselves.
@@ -1175,7 +1175,7 @@ class RegattaSimulator:
     def _apply_wind_shadow(self):
         """Blankets boats sitting in the 2 hexes directly downwind of another boat.
 
-        rules.md: a boat that STARTS the round in a wind shadow has her maximum
+        the rulebook: a boat that STARTS the round in a wind shadow has her maximum
         momentum reduced by 1 for that round (floor of 1). Shadow entered later, during
         the Movement Phase, is ignored — this is resolved once, here.
 
@@ -1236,7 +1236,7 @@ class RegattaSimulator:
                 free_slots.remove(slot)
 
             start_facing = 1 if i % 2 == 0 else 5  # Alternate 60° NE and 300° NW
-            # Every boat starts at Momentum 2 (rules.md, Race Setup). Starting at 0
+            # Every boat starts at Momentum 2 (the rulebook, Race Setup). Starting at 0
             # would leave a 1-slot boat spending the entire pre-start just getting
             # under way.
             boat = Boat(i + 1, name, color, pos, start_facing, 2, skill_level=boat_skill)
@@ -1310,7 +1310,7 @@ class RegattaSimulator:
         self._print_final_standings()
 
     def _execute_round(self, round_num, is_prestart=False, prestart_turns_left=0):
-        # The line marks are live during the pre-start (rules.md, "The line marks count
+        # The line marks are live during the pre-start (the rulebook, "The line marks count
         # too"), which _live_marks needs to know.
         self._is_prestart = is_prestart
 
@@ -1354,7 +1354,7 @@ class RegattaSimulator:
                 
             if puff_active:
                 # A gust does nothing for a boat stalled head to wind — her sails are
-                # flogging. rules.md caps Irons at 1 with or without a puff.
+                # flogging. the rulebook caps Irons at 1 with or without a puff.
                 if b.get_pos_of_sail(self.global_wind) == "Irons":
                     self.log(f"💨 Puff does nothing for {b.name} — she is in Irons.")
                 else:
@@ -1545,7 +1545,7 @@ class RegattaSimulator:
                     if self.course.within_line_span(b.pos):
                         # The final leg fixes which way the line must be crossed. A boat
                         # that wanders back over the line from the finish side has not
-                        # finished (rules.md: "in the direction indicated by the final
+                        # finished (the rulebook: "in the direction indicated by the final
                         # course leg"). A hex split by the line counts as the finish side.
                         was, now = line_rank(prev_pos), line_rank(b.pos)
                         last_upwind = self.course.marks[-1]["upwind"] if self.course.marks else 10
@@ -1642,7 +1642,7 @@ class RegattaSimulator:
 
         The Committee Boat and Pin bound the starting leg and the finishing leg, so they
         are live during the **pre-start, Leg 1, and the final leg** and are scenery the
-        rest of the time (rules.md, "The line marks count too"). That is what makes
+        rest of the time (the rulebook, "The line marks count too"). That is what makes
         barging at the boat end a real risk rather than a free squeeze — a windward boat
         has the leeward boat's right of way on one side and a buoy that will not move on
         the other.
@@ -1690,7 +1690,7 @@ class RegattaSimulator:
             return b2, b1, "Rule 13 (Tacking)"
 
         # A boat returning to the pre-start side after starting early has no rights at
-        # all and must keep clear of everyone who started properly (rules.md, OCS
+        # all and must keep clear of everyone who started properly (the rulebook, OCS
         # Right-of-Way). Checked before the tack rules, since even a starboard-tack
         # boat gets no protection while she is sailing back.
         if b1.is_returning_ocs != b2.is_returning_ocs:
@@ -1742,7 +1742,7 @@ class RegattaSimulator:
             return
         boat.received_protest_this_round = True
         boat.protests += 1
-        # rules.md: the card must be cleared at the next Planning Phase, costing
+        # the rulebook: the card must be cleared at the next Planning Phase, costing
         # action slots. `protest_cost` makes the size of that penalty configurable.
         boat.active_protest = True
         self.metrics["protests_count"] = self.metrics.get("protests_count", 0) + 1
@@ -1771,7 +1771,7 @@ class RegattaSimulator:
                         f"violated {rule_violated} against {row_boat.name} at {hex_pos}!")
 
         # Mark collisions. Only the marks that bound the leg she is on can be hit —
-        # the one she is rounding now and the one she just left (RRS 31, and rules.md
+        # the one she is rounding now and the one she just left (RRS 31, and the rulebook
         # "a mark on the current leg"). Blundering into a buoy from a leg she is not
         # sailing is not a foul, and penalising every mark on the board made a Triangle
         # boat liable for a mark she had finished with two legs ago.
