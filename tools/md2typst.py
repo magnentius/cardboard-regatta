@@ -322,7 +322,7 @@ PHASE_FLOW = """#phase-flow(
 COVER = '''#cover(
   "Cardboard Regatta",
   "The Tactical Board Game of Competitive Sailboat Racing",
-  "/images/cardboard_regatta.jpg",
+  "/images/cover.svg",
   tagline: [Harness the wind, master right-of-way tactics, and outmaneuver your
     rivals to take the bullet.],
 )

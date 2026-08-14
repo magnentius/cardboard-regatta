@@ -247,7 +247,15 @@
     v(6pt)
     text(size: 12pt, style: "italic", fill: p.muted)[#subtitle]
     v(22pt)
-    if art != none { image(art, width: 70%) }
+    // The cover art follows the theme, same as any other figure: Typst does
+    // not implement prefers-color-scheme, so the screen build loads a sibling
+    // with its colours baked in.
+    if art != none {
+      let src = if theme-name.get() == "screen" {
+        art.replace(".svg", "-dark.svg")
+      } else { art }
+      image(src, width: 62%)
+    }
     v(14pt)
     text(font: mono, size: 8pt, fill: p.muted, tracking: 0.1em)[#upper(edition)]
     if tagline != none {

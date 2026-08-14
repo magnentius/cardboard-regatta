@@ -206,12 +206,159 @@ def square_line(pal, themed):
     return "".join(s)
 
 
+
+# ------------------------------------------------------------------------ cover
+#
+# Two boats crossing on opposite tacks — which is Rule 10, the oldest rule in the
+# sport and the one this game leans on hardest: 39% of every Protest issued.
+#
+# The geometry is the point of drawing this by hand rather than generating it.
+# With the wind from the top of the frame:
+#
+#   left boat   bow up-and-right (heading NE)  -> wind crosses her PORT side,
+#                                                 so she is on PORT tack and her
+#                                                 sails are set to STARBOARD
+#   right boat  bow up-and-left  (heading NW)  -> wind crosses her STARBOARD side,
+#                                                 so she is on STARBOARD tack and
+#                                                 her sails are set to PORT
+#
+# Both sails therefore lean inward and nearly touch at the crossing. That mirror
+# is what "opposite tacks" looks like from above, and it is exactly the symmetry
+# that was inverted in the rules until this session.
+
+# Sail opacity is per-palette, not fixed. Over white, dropping opacity lightens
+# a sail and separates the jib from the main; over navy it darkens it, and the
+# red boat turns to mud. The dark theme therefore carries both sails much
+# closer to solid.
+COVER_LIGHT = dict(boatA="#c32a30", boatB="#0f1d41", grid="#0f1d41",
+                   wind="#0f1d41", wake="#b6c8dc", main_op=0.88, jib_op=0.60)
+COVER_DARK = dict(boatA="#ef5a60", boatB="#e7edf6", grid="#8fb0d4",
+                  wind="#8fb0d4", wake="#2c4270", main_op=1.0, jib_op=0.74)
+
+
+# Side elevation, not plan view. Overhead was tried first — it matches the
+# board, and it lets "opposite tacks" be literally true rather than implied —
+# but it cannot work: close-hauled boats sheet their sails in almost to the
+# centreline, so from directly above the sail sits on top of the hull and
+# disappears. Swing the sails out far enough to see and you have drawn two
+# boats running downwind, on the same tack, looking like moths.
+#
+# So the boats are drawn side-on and mirrored, which is the conventional
+# shorthand for opposite tacks and is unmistakably a sailboat at any size.
+
+def hull(S):
+    """Topsides from the side: a sheer line rising to the bow, a rounded forefoot."""
+    return (f"M {-0.92*S:.1f},{-0.02*S:.1f} "
+            f"L {1.00*S:.1f},{-0.17*S:.1f} "
+            f"L {0.80*S:.1f},{0.20*S:.1f} "
+            f"Q {0.04*S:.1f},{0.35*S:.1f} {-0.70*S:.1f},{0.17*S:.1f} Z")
+
+
+def mainsail(S):
+    """Luff up the mast, foot along the boom, leech curved between them."""
+    return (f"M {0.02*S:.1f},{-1.70*S:.1f} "
+            f"Q {-0.40*S:.1f},{-0.96*S:.1f} {-0.62*S:.1f},{-0.24*S:.1f} "
+            f"L {0.08*S:.1f},{-0.19*S:.1f} Z")
+
+
+def jib(S):
+    """Luff down the forestay to the bow, a shallow leech back to the mast."""
+    return (f"M {0.05*S:.1f},{-1.50*S:.1f} "
+            f"L {0.95*S:.1f},{-0.15*S:.1f} "
+            f"Q {0.36*S:.1f},{-0.44*S:.1f} {0.14*S:.1f},{-0.21*S:.1f} Z")
+
+
+def cover_boat(cx, cy, S, face, heel, colour, wake, main_op, jib_op):
+    """A boat under sail. `face` is +1 for bow-right, -1 for bow-left (drawn by
+    mirroring, which is what makes the pair read as opposite tacks). `heel`
+    leans her away from her wind."""
+    g = [f'  <g transform="translate({cx},{cy}) scale({face},1) rotate({heel})">\n']
+    g.append(f'    <path d="{jib(S)}" fill="{colour}" opacity="{jib_op}"/>\n')
+    g.append(f'    <path d="{mainsail(S)}" fill="{colour}" opacity="{main_op}"/>\n')
+    g.append(f'    <line x1="{0.10*S:.1f}" y1="{-0.04*S:.1f}" '
+             f'x2="{0.02*S:.1f}" y2="{-1.72*S:.1f}" stroke="{colour}" '
+             f'stroke-width="{0.030*S:.1f}" stroke-linecap="round"/>\n')
+    g.append(f'    <line x1="{0.08*S:.1f}" y1="{-0.19*S:.1f}" '
+             f'x2="{-0.64*S:.1f}" y2="{-0.25*S:.1f}" stroke="{colour}" '
+             f'stroke-width="{0.026*S:.1f}" stroke-linecap="round"/>\n')
+    g.append(f'    <path d="{hull(S)}" fill="{colour}"/>\n')
+    g.append("  </g>\n")
+    # Bow wave, drawn outside the heel so it stays level with the water.
+    g.append(f'  <path d="M {cx + face*0.98*S:.0f},{cy + 0.20*S:.0f} '
+             f'q {face*0.22*S:.0f},{0.10*S:.0f} {face*0.52*S:.0f},{0.04*S:.0f}" '
+             f'fill="none" stroke="{wake}" stroke-width="{0.05*S:.1f}" '
+             f'stroke-linecap="round" opacity="0.55"/>\n')
+    g.append(f'  <path d="M {cx - face*0.90*S:.0f},{cy + 0.17*S:.0f} '
+             f'q {-face*0.24*S:.0f},{0.06*S:.0f} {-face*0.50*S:.0f},{0.01*S:.0f}" '
+             f'fill="none" stroke="{wake}" stroke-width="{0.04*S:.1f}" '
+             f'stroke-linecap="round" opacity="0.35"/>\n')
+    return "".join(g)
+
+
+def cover(pal, themed):
+    W = H = 1000
+    cx, cy = W / 2, H / 2
+    Rh = 46.0
+    s = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" '
+         f'width="{W}" height="{H}" role="img" aria-label="Two sailboats crossing '
+         f'on opposite tacks over a hex grid">\n']
+    if themed:
+        s.append("  <style>\n    .grid { stroke: %s; }\n    .wind { stroke: %s; }\n"
+                 "    @media (prefers-color-scheme: dark) {\n"
+                 "      .grid { stroke: %s; }\n      .wind { stroke: %s; }\n    }\n"
+                 "  </style>\n" % (COVER_LIGHT["grid"], COVER_LIGHT["wind"],
+                                   COVER_DARK["grid"], COVER_DARK["wind"]))
+    else:
+        s.append("  <style>\n    .grid { stroke: %s; }\n    .wind { stroke: %s; }\n"
+                 "  </style>\n" % (pal["grid"], pal["wind"]))
+
+    # Flat-top hexes in vertical columns, each faded by its distance from the
+    # centre. Per-hex opacity rather than a mask: masks are the first thing an
+    # SVG renderer drops, and this has to survive Typst as well as a browser.
+    colw, rowh = 1.5 * Rh, math.sqrt(3) * Rh
+    for i in range(-1, int(W / colw) + 2):
+        for j in range(-1, int(H / rowh) + 2):
+            hx = i * colw
+            hy = j * rowh + (rowh / 2 if i % 2 else 0)
+            d = math.dist((hx, hy), (cx, cy)) / (W * 0.62)
+            op = max(0.0, 0.42 * (1 - d ** 1.6))
+            if op < 0.02:
+                continue
+            pts = " ".join(f"{hx + Rh*math.cos(math.radians(a)):.1f},"
+                           f"{hy + Rh*math.sin(math.radians(a)):.1f}"
+                           for a in range(0, 360, 60))
+            s.append(f'  <polygon points="{pts}" fill="none" class="grid" '
+                     f'stroke-width="1.2" opacity="{op:.3f}"/>\n')
+
+    for k, x in enumerate((196, 300, 700, 804)):
+        top, bot = 60, 150 + (18 if k in (1, 2) else 0)
+        s.append(f'  <line x1="{x}" y1="{top}" x2="{x}" y2="{bot}" class="wind" '
+                 f'stroke-width="2.4" stroke-linecap="round" opacity="0.5"/>\n')
+        s.append(f'  <path d="M {x-7},{bot-9} L {x},{bot+3} L {x+7},{bot-9}" '
+                 f'fill="none" class="wind" stroke-width="2.4" stroke-linecap="round" '
+                 f'stroke-linejoin="round" opacity="0.5"/>\n')
+
+    S = 178
+    # Mirrored, converging: the crossing that Rule 10 exists to settle. A light
+    # heel only — enough to say "under press of sail", not enough to read as a
+    # claim about which way the wind is blowing in a side elevation.
+    s.append(cover_boat(288, 648, S, +1, -4, pal["boatA"], pal["wake"],
+                        pal["main_op"], pal["jib_op"]))
+    s.append(cover_boat(712, 648, S, -1, -4, pal["boatB"], pal["wake"],
+                        pal["main_op"], pal["jib_op"]))
+    s.append("</svg>\n")
+    return "".join(s)
+
+
 def main():
     OUT.mkdir(exist_ok=True)
     for name, fn in (("points-of-sail", points_of_sail), ("square-line", square_line)):
         (OUT / f"{name}.svg").write_text(fn(LIGHT, themed=True))
         (OUT / f"{name}-dark.svg").write_text(fn(DARK, themed=False))
         print(f"  wrote {name}.svg and {name}-dark.svg")
+    (OUT / "cover.svg").write_text(cover(COVER_LIGHT, themed=True))
+    (OUT / "cover-dark.svg").write_text(cover(COVER_DARK, themed=False))
+    print("  wrote cover.svg and cover-dark.svg")
 
 
 if __name__ == "__main__":
