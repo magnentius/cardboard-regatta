@@ -1,3 +1,47 @@
+# CC0 1.0 Universal — Public Domain Dedication
+
+To the extent possible under law, **John Karakashian** has waived all copyright
+and related or neighboring rights to *Iron Protocol*, and dedicated the work to
+the public domain worldwide.
+
+**You may copy, modify, distribute and perform the work — including for
+commercial purposes — without asking permission and without giving credit.**
+Credit is welcome, but it is not a condition of use.
+
+## Why
+
+Most of the text and art in this project was generated with AI assistance.
+Material produced without human authorship may not be copyrightable at all in
+some jurisdictions, while the human contributions here — the game design, the
+editing, the layout code, the selection and arrangement of the whole — very
+likely are. Rather than leave anyone to work out where that line falls, this
+dedication waives whatever rights do exist. CC0 is built for exactly this
+ambiguity: it relinquishes the rights, and grants a permissive licence as a
+fallback should the waiver be held ineffective in any jurisdiction.
+
+## Scope
+
+This dedication covers everything authored for this project: the rules text,
+the diagrams and images, the Typst sources, the web app, and the tools.
+
+It does **not** cover third-party components redistributed here under their own
+terms, which remain governed by those terms:
+
+| Component | Licence |
+| --- | --- |
+| `typst/fonts/XCharter-*.otf` | Bitstream Charter free licence + LPPL 1.3 — see `typst/fonts/XCharter-README.txt` |
+| `typst/fonts/texgyreheros-*.otf` | GUST Font Licence — see `typst/fonts/GUST-FONT-LICENSE.txt` |
+
+## History
+
+*Iron Protocol* was previously released under CC BY-NC-SA 4.0. That licence was
+irrevocable, so copies obtained under it remain governed by it — but CC0 is
+strictly more permissive, so nothing anyone was allowed to do before is
+forbidden now. Everything from this point forward is CC0.
+
+---
+
+```text
 Creative Commons Legal Code
 
 CC0 1.0 Universal
@@ -119,3 +163,4 @@ express Statement of Purpose.
  d. Affirmer understands and acknowledges that Creative Commons is not a
     party to this document and has no duty or obligation with respect to
     this CC0 or use of the Work.
+```
