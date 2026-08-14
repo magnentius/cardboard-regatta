@@ -2,6 +2,8 @@
 
 **The Tactical Board Game of Competitive Sailboat Racing**
 
+*Designed by John Karakashian*
+
 > *Harness the wind, master right-of-way tactics, and outmaneuver your rivals to take the bullet!*
 
 ---
@@ -76,9 +78,17 @@ re-run it rather than editing the SVGs by hand, which CI checks.
 
 ---
 
-## 📄 License & Copyright
+## 📄 Credits & License
 
-© 2026 John Karakashian.
+Game design, rulebook and artwork by **John Karakashian**.
 
-This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/). 
-You are free to share and adapt the material for non-commercial purposes, provided you give appropriate credit and distribute your contributions under the same license.
+This work is dedicated to the **public domain** under
+[CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/) — see [`LICENSE`](LICENSE).
+To the extent possible under law, John Karakashian has waived all copyright and related or
+neighbouring rights to Cardboard Regatta.
+
+Print it, sell it, remake it, fold it into something else — no permission and no attribution
+required. A designer credit is always welcome, never owed.
+
+The vendored fonts in [`typst/fonts`](typst/fonts) are **not** covered by this dedication; they
+keep their own licenses (see [`typst/fonts/README.md`](typst/fonts/README.md)).

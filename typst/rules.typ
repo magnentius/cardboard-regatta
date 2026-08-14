@@ -24,6 +24,8 @@
   "/images/cover.svg",
   tagline: [Harness the wind, master right-of-way tactics, and outmaneuver your
     rivals to take the bullet.],
+  designer: "John Karakashian",
+  license: "Public domain — CC0 1.0 Universal",
 )
 
 #outline(title: [Contents], depth: 3, indent: auto)

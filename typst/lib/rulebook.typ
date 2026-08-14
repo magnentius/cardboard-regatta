@@ -231,7 +231,7 @@
 
 // --- Cover ------------------------------------------------------------------
 
-#let cover(title, subtitle, art, tagline: none) = context {
+#let cover(title, subtitle, art, tagline: none, designer: none, license: none) = context {
   let p = pal.get()
   set page(header: none, footer: none)
   align(center + horizon, block(width: 100%, {
@@ -246,6 +246,11 @@
     text(font: sans, size: 38pt, weight: "bold", fill: p.ink)[#title]
     v(6pt)
     text(size: 12pt, style: "italic", fill: p.muted)[#subtitle]
+    if designer != none {
+      v(10pt)
+      text(font: sans, size: 9.5pt, fill: p.dim, tracking: 0.05em)[
+        Designed by #text(weight: "bold", fill: p.ink)[#designer]]
+    }
     v(22pt)
     // The cover art follows the theme, same as any other figure: Typst does
     // not implement prefers-color-scheme, so the screen build loads a sibling
@@ -262,6 +267,13 @@
       v(16pt)
       block(width: 72%, align(center,
         text(size: 9pt, style: "italic", fill: p.dim, tagline)))
+    }
+    // The dedication belongs on the cover, not buried in a colophon: whoever
+    // holds a photocopy of this book should be able to see that copying it was
+    // always allowed.
+    if license != none {
+      v(18pt)
+      text(font: mono, size: 7pt, fill: p.muted, tracking: 0.14em)[#upper(license)]
     }
   }))
   pagebreak()
